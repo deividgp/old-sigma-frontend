@@ -1,31 +1,46 @@
-import React from 'react';
+//import React, { useMemo, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Routes,
   Route } from "react-router-dom";
+import About from './pages/About';
+import PrivateChat from './pages/PrivateChat';
+import ServerChat from './pages/ServerChat';
+import Me from './pages/Me';
+import Private from './pages/Private';
+import Server from './pages/Server';
+import AboutServer from './pages/AboutServer';
+//import { UserContext } from "./context/UserContext.js";
 
-const Home = () => <h1>hola</h1>
+//const [ user, setUser ] = useState(null);
+//const providerValue = useMemo(() => ({ user, setUser }), [user, setUser]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<App />}>
-        <Route path="home" element={<Home />}/>
-        <Route path="admin" element={<Home />}/>
-        <Route path="channels" element={<Home />}>
-          <Route path="@me" element={<Home />}>
-            <Route path=":userId" element={<Home />}/>
-          </Route>
-          <Route path=":serverId" element={<Home />}>
-            <Route path=":channelId" element={<Home />}></Route>
+  //<UserContext.Provider value={providerValue}>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<App />}>
+          <Route index element={<Me />}/>
+          <Route path="privatechat" element={<PrivateChat />}/>
+          <Route path="serverchat" element={<ServerChat />}/>
+          <Route path="about" element={<About />}/>
+          <Route path="channels">
+            <Route path="@me" element={<Private />}>
+              <Route index element={<Me />}/>
+              <Route path=":userId" element={<PrivateChat />}/>
+            </Route>
+            <Route path=":serverId" element={<Server />}>
+              <Route index element={<AboutServer />}/>
+              <Route path=":channelId" element={<ServerChat />}/>
+            </Route>
           </Route>
         </Route>
-      </Route>
-    </Routes>
-  </BrowserRouter>
+      </Routes>
+    </BrowserRouter>
+  //</UserContext.Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function
