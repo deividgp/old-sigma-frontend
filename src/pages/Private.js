@@ -3,7 +3,7 @@ import DirectMessagesList from "../components/DirectMessagesList";
 
 function Private() {
     return (
-        <div style={{display: "flex"}}>
+        <div style={{display: "flex", height: "100%"}}>
             <DirectMessagesList/>
             <Outlet/>
         </div>

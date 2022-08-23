@@ -12,12 +12,14 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-//import {userContext} from './context/UserContext';
+import { useContext } from "react";
+import { UserContext } from "./context/UserContext";
 
 function App() {
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
   const [serverName, setServerName] = React.useState("");
+  const { user } = useContext(UserContext);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -40,6 +42,13 @@ function App() {
     setServerName("");
   };
 
+  const DisplaySidebar = ({ children }) => {
+    if(user)
+      return children;
+
+    return null;
+  }
+
   return (
     <div className="App">
       <header className='App-header'>
@@ -53,24 +62,27 @@ function App() {
         </nav>
       </header>
       <body className='App-body'>
-        <div className='ServersList'>
-          <ul>
-              <li>
-                <Tooltip title="Home" placement='right'>
-                  <IconButton aria-label="delete" size="large" color="warning" onClick={handleClickNavigate}>
-                    <HomeIcon fontSize='60' />
-                  </IconButton>
-                </Tooltip>
-              </li>
-              <li>
-                <Tooltip title="Add" placement='right'>
-                  <IconButton aria-label="delete" size="large" color="warning" onClick={handleClickOpen}>
-                    <AddIcon fontSize='60' />
-                  </IconButton>
-                </Tooltip>
-              </li>
-          </ul>
-        </div>
+        <DisplaySidebar>
+          <div className='ServersList'>
+            <ul>
+                <li>
+                  <Tooltip title="Home" placement='right'>
+                    <IconButton aria-label="delete" size="large" color="warning" onClick={handleClickNavigate}>
+                      <HomeIcon fontSize='60' />
+                    </IconButton>
+                  </Tooltip>
+                </li>
+                <li>
+                  <Tooltip title="Add" placement='right'>
+                    <IconButton aria-label="delete" size="large" color="warning" onClick={handleClickOpen}>
+                      <AddIcon fontSize='60' />
+                    </IconButton>
+                  </Tooltip>
+                </li>
+            </ul>
+          </div>
+        </DisplaySidebar>
+        
         <main className='App-main'>
           <Outlet/>
         </main>

@@ -12,24 +12,41 @@ import Me from './pages/Me';
 import Private from './pages/Private';
 import Server from './pages/Server';
 import AboutServer from './pages/AboutServer';
-//import { UserContext } from "./context/UserContext.js";
-
-//const [ user, setUser ] = useState(null);
+import Login from './pages/Login';
+import { UserProvider } from "./context/UserContext.js";
+import { LoggedIn, NotLoggedIn } from './utils/PrivateRoutes';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  //<UserContext.Provider value={providerValue}>
+  <UserProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />}>
-          <Route index element={<Me />}/>
+          <Route index element={
+            <NotLoggedIn>
+              <Me />
+            </NotLoggedIn>
+          }/>
           <Route path="about" element={<About />}/>
+          <Route path="login" element={
+            <LoggedIn>
+              <Login />
+            </LoggedIn>
+          }/>
           <Route path="channels">
-            <Route path="@me" element={<Private />}>
+            <Route path="@me" element={
+              <NotLoggedIn>
+                <Private />
+              </NotLoggedIn>
+            }>
               <Route index element={<Me />}/>
               <Route path=":userId" element={<PrivateChat />}/>
             </Route>
-            <Route path=":serverId" element={<Server />}>
+            <Route path=":serverId" element={
+              <NotLoggedIn>
+                <Server />
+              </NotLoggedIn>
+            }>
               <Route index element={<AboutServer />}/>
               <Route path=":channelId" element={<ServerChat />}/>
             </Route>
@@ -37,7 +54,7 @@ root.render(
         </Route>
       </Routes>
     </BrowserRouter>
-  //</UserContext.Provider>
+  </UserProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

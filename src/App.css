@@ -44,6 +44,7 @@
 .App-main {
   padding-left: 72px;
   overflow-y: auto;
+  height: calc(100vh - 90px);
 }
 
 .App-link {
@@ -55,9 +56,23 @@
   width: 72px;
   left: 0px;
   height: calc(100vh - 90px);
-  position: absolute;
+  position: fixed;
   overflow-y: auto;
   color: white;
+}
+
+div::-webkit-scrollbar {
+  background: #fff;
+  width: 8px;
+  height: 15px;
+}
+
+div::-webkit-scrollbar-thumb {
+  background: #c5c5c5;
+}
+
+div{
+  scrollbar-width: thin;
 }
 
 nav {
@@ -67,7 +82,7 @@ nav {
 ul {
   list-style-type: none;
   padding: 0;
-  padding-left: 15px;
+  padding-left: 12px;
 }
 
 nav a {

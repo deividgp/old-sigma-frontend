@@ -4,7 +4,7 @@ import MembersList from "../components/MembersList";
 
 function Server() {
     return (
-        <div style={{display: "flex"}}>
+        <div style={{display: "flex", height: "100%"}}>
             <ChannelsList/>
             <Outlet/>
             <MembersList/>

@@ -2,8 +2,8 @@
 
 function Chat() {
     return (
-        <div style={{backgroundColor: "#613d5f", minWidth: "100px", height: "calc(100vh - 90px)", overflowY: "hidden", flexGrow: "1", overflowX: "hidden"}}>
-            <div style={{overflowY: "auto", height: "calc(100vh - 90px - 50px - 15px)"}}>
+        <div style={{backgroundColor: "#613d5f", height: "100%", overflowY: "hidden", flexGrow: "1", overflowX: "hidden"}}>
+            <div style={{overflowY: "auto", height: "calc(100% - 50px - 15px)"}}>
                 <ul>
                     <li>hola</li>
                     <li>hola</li>
