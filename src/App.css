@@ -29,15 +29,19 @@
   flex-direction: row;
   align-content: center;
   justify-content: space-between;
-  background-color: #282c34;
+  /*background-color: #282c34;*/
+  background: linear-gradient(-45deg, #2B3180, #E95B0D);
   width: 100%;
   top: 0;
   position: fixed;
   height: 90px;
 }
 
-.App-main {
+.App-body {
   padding-top: 90px;
+}
+
+.App-main {
   padding-left: 72px;
   overflow-y: auto;
 }
@@ -46,12 +50,24 @@
   color: #61dafb;
 }
 
+.ServersList {
+  background-color: #1D1D1B;
+  width: 72px;
+  left: 0px;
+  height: calc(100vh - 90px);
+  position: absolute;
+  overflow-y: auto;
+  color: white;
+}
+
 nav {
   padding-right: 10px;
 }
 
-nav ul {
+ul {
   list-style-type: none;
+  padding: 0;
+  padding-left: 15px;
 }
 
 nav a {

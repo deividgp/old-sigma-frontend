@@ -5,9 +5,9 @@ import MembersList from "../components/MembersList";
 function Server() {
     return (
         <div style={{display: "flex"}}>
-            <ChannelsList></ChannelsList>
+            <ChannelsList/>
             <Outlet/>
-            <MembersList></MembersList>
+            <MembersList/>
         </div>
     );
 }

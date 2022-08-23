@@ -1,6 +1,6 @@
 function AboutServer() {
     return (
-        <div>
+        <div style={{backgroundColor: "#613d5f"}}>
             <p>L’aplicació que tinc pensat fer serà una aplicació de missatgeria semblant a Discord, 
                 una aplicació basada en servidors (grups públics o privats on usuaris poden interactuar mitjançant 
                 diferents canals que funcionen com a petits fórums per parlar d’un tema en concret) per l’àmbit gaming 

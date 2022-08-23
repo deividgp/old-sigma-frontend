@@ -3,9 +3,7 @@ import Chat from "../components/Chat";
 
 function PrivateChat() {
     return (
-        <div>
-            <Chat/>
-        </div>
+        <Chat/>
     );
 }
 

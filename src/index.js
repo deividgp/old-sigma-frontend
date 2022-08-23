@@ -15,7 +15,6 @@ import AboutServer from './pages/AboutServer';
 //import { UserContext } from "./context/UserContext.js";
 
 //const [ user, setUser ] = useState(null);
-//const providerValue = useMemo(() => ({ user, setUser }), [user, setUser]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -24,8 +23,6 @@ root.render(
       <Routes>
         <Route path="/" element={<App />}>
           <Route index element={<Me />}/>
-          <Route path="privatechat" element={<PrivateChat />}/>
-          <Route path="serverchat" element={<ServerChat />}/>
           <Route path="about" element={<About />}/>
           <Route path="channels">
             <Route path="@me" element={<Private />}>
