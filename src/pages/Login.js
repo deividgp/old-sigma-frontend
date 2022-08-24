@@ -3,7 +3,7 @@ import { UserContext } from "../context/UserContext";*/
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import Input from "@mui/material/Input";
-import axios from '../utils/axios';
+import axios from 'axios';
 
 function Login() {
     //const { user, setUser } = useContext(UserContext);
@@ -14,7 +14,7 @@ function Login() {
     }
     });
     const onSubmit = data => {
-        axios.post(`/login`, { username: data.username, password: data.password }, { withCredentials: true })
+        axios.post(`/login`, { username: data.username, password: data.password })
         .then(res => {
             console.log(res);
             console.log(res.data);

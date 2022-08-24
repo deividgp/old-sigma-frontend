@@ -1,58 +1,15 @@
-//import React, { useMemo, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter, Routes,
-  Route } from "react-router-dom";
-import About from './pages/About';
-import PrivateChat from './pages/PrivateChat';
-import ServerChat from './pages/ServerChat';
-import Me from './pages/Me';
-import Private from './pages/Private';
-import Server from './pages/Server';
-import AboutServer from './pages/AboutServer';
-import Login from './pages/Login';
+import { BrowserRouter } from "react-router-dom";
 import { UserProvider } from "./context/UserContext.js";
-import { LoggedIn, NotLoggedIn } from './utils/PrivateRoutes';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <UserProvider>
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />}>
-          <Route index element={
-            <NotLoggedIn>
-              <Me />
-            </NotLoggedIn>
-          }/>
-          <Route path="about" element={<About />}/>
-          <Route path="login" element={
-            <LoggedIn>
-              <Login />
-            </LoggedIn>
-          }/>
-          <Route path="channels">
-            <Route path="@me" element={
-              <NotLoggedIn>
-                <Private />
-              </NotLoggedIn>
-            }>
-              <Route index element={<Me />}/>
-              <Route path=":userId" element={<PrivateChat />}/>
-            </Route>
-            <Route path=":serverId" element={
-              <NotLoggedIn>
-                <Server />
-              </NotLoggedIn>
-            }>
-              <Route index element={<AboutServer />}/>
-              <Route path=":channelId" element={<ServerChat />}/>
-            </Route>
-          </Route>
-        </Route>
-      </Routes>
+      <App />
     </BrowserRouter>
   </UserProvider>
 );

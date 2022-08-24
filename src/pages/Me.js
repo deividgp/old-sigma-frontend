@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
 
 function Me() {
-    const { user, setUser } = useContext(UserContext);
+    const { user } = useContext(UserContext);
     return (
         <div style={{backgroundColor: "#613d5f", height: "100%", overflowY: "auto" }}>
             L’aplicació que tinc pensat fer serà una aplicació de missatgeria semblant a Discord, 
@@ -17,8 +17,7 @@ function Me() {
                 d’un servidor. A més, també vull integrar tots els accesos dels grups en una sola pàgina com fa Discord 
                 perquè a la versió web de Slack es necessita sortir d’un servidor per entrar a un altre.
                 En resum: single-page application a totes les plataformes.
-            <p>{user}</p>
-            <button onClick={() => setUser("Andy")}>hola</button>
+            <p>{user.username}</p>
         </div>
     );
 }
