@@ -10,36 +10,47 @@ import Login from './pages/Login';
 import Home from "./pages/Home"
 import { Routes, Route } from "react-router-dom";
 import { LoggedIn, NotLoggedIn } from './utils/PrivateRoutes';
+import axios from "axios";
+import { useContext } from "react";
+import { UserContext } from "./contexts/UserContext";
+import Logout from './pages/Logout';
 
 function App() {
+  const { setUser } = useContext(UserContext);
+
+  React.useEffect(() => {
+    axios.get(`/user`)
+      .then(res => {
+          console.log(res.data);
+          setUser(res.data);
+      })
+  }, []);
+
   return (
     <Routes>
-      <Route path="/" element={<Home />}>
-        <Route index element={
-          <NotLoggedIn>
-            <Me />
-          </NotLoggedIn>
-        }/>
+      <Route path="login" element={
+        <LoggedIn>
+          <Login />
+        </LoggedIn>
+      }/>
+      <Route path="logout" element={
+        <NotLoggedIn>
+          <Logout />
+        </NotLoggedIn>
+      }/>
+      <Route path="/" element={ 
+        <NotLoggedIn>
+          <Home />
+        </NotLoggedIn>
+      }>
+        <Route index element={ <Me /> }/>
         <Route path="about" element={<About />}/>
-        <Route path="login" element={
-          <LoggedIn>
-            <Login />
-          </LoggedIn>
-        }/>
         <Route path="channels">
-          <Route path="@me" element={
-            <NotLoggedIn>
-              <Private />
-            </NotLoggedIn>
-          }>
+          <Route path="@me" element={ <Private /> }>
             <Route index element={<Me />}/>
             <Route path=":userId" element={<PrivateChat />}/>
           </Route>
-          <Route path=":serverId" element={
-            <NotLoggedIn>
-              <Server />
-            </NotLoggedIn>
-          }>
+          <Route path=":serverId" element={ <Server /> }>
             <Route index element={<AboutServer />}/>
             <Route path=":channelId" element={<ServerChat />}/>
           </Route>

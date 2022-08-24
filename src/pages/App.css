@@ -30,7 +30,6 @@
 }
 
 .App-main {
-  padding-left: 72px;
   overflow-y: auto;
   height: calc(100vh - 90px);
 }
@@ -38,6 +37,8 @@
 .App-link {
   color: #61dafb;
 }
+
+
 
 .ServersList {
   background-color: #1D1D1B;
