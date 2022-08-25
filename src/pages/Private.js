@@ -1,10 +1,10 @@
 import { Outlet } from "react-router-dom";
-import DirectMessagesList from "../components/DirectMessagesList";
+import PrivateChatsList from "../components/PrivateChatsList";
 
 function Private() {
     return (
         <div style={{display: "flex", height: "100%"}}>
-            <DirectMessagesList/>
+            <PrivateChatsList/>
             <Outlet/>
         </div>
     );

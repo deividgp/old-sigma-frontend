@@ -15,6 +15,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Loading from "../components/Loading";
 import axios from "axios";
 import { ServersContext } from '../contexts/ServersContext';
+import { UsersContext } from '../contexts/UsersContext';
 import { useContext } from "react";
 
 function Home() {
@@ -23,13 +24,23 @@ function Home() {
   const [serverName, setServerName] = React.useState("");
   const [loading, setLoading] = React.useState(true);
   const { servers, setServers } = useContext(ServersContext);
+  const { pending, setPending, friends, setFriends } = useContext(UsersContext);
 
   React.useEffect(() => {
     axios.get("/loggeduser/servers")
     .then(res => {
-        console.log(res.data);
-        setServers(res.data);
-        setLoading(false);
+      setServers(res.data);
+
+      axios.get("/loggeduser/pendingfriends")
+      .then(res => {
+        setPending(res.data);
+
+        axios.get("/loggeduser/friends")
+        .then(res => {
+            setFriends(res.data);
+            setLoading(false);
+        })
+      })
     })
   }, []);
 
@@ -78,7 +89,7 @@ function Home() {
               <ul>
                   <li>
                       <Tooltip title="Home" placement='right'>
-                        <IconButton aria-label="delete" size="large" color="warning" onClick={() => handleClickNavigate("/")}>
+                        <IconButton aria-label="delete" size="large" color="warning" onClick={() => handleClickNavigate("/channels/@me")}>
                             <HomeIcon fontSize='60' />
                         </IconButton>
                       </Tooltip>
