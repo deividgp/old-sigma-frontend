@@ -14,17 +14,21 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Loading from "../components/Loading";
 import axios from "axios";
+import { ServersContext } from '../contexts/ServersContext';
+import { useContext } from "react";
 
 function Home() {
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
   const [serverName, setServerName] = React.useState("");
   const [loading, setLoading] = React.useState(true);
-  
+  const { servers, setServers } = useContext(ServersContext);
+
   React.useEffect(() => {
     axios.get("/loggeduser/servers")
     .then(res => {
         console.log(res.data);
+        setServers(res.data);
         setLoading(false);
     })
   }, []);
@@ -37,8 +41,8 @@ function Home() {
     setOpen(false);
   };
 
-  const handleClickNavigate = () => {
-    navigate("/", { replace: true });
+  const handleClickNavigate = (route) => {
+    navigate(route, { replace: true });
   };
 
   const handleServerNameChange = (event) => {
@@ -64,8 +68,6 @@ function Home() {
               <img src={logo} alt="Logo"/>
               <nav>
                 <ul>
-                  <li><Link to="/channels/454/541">ServerChat</Link></li>
-                  <li><Link to="/channels/@me/5874545">PrivateChat</Link></li>
                   <li><Link to="/about">About</Link></li>
                   <li><Link to="/logout">Logout</Link></li>
                 </ul>
@@ -76,7 +78,7 @@ function Home() {
               <ul>
                   <li>
                       <Tooltip title="Home" placement='right'>
-                        <IconButton aria-label="delete" size="large" color="warning" onClick={handleClickNavigate}>
+                        <IconButton aria-label="delete" size="large" color="warning" onClick={() => handleClickNavigate("/")}>
                             <HomeIcon fontSize='60' />
                         </IconButton>
                       </Tooltip>
@@ -88,6 +90,17 @@ function Home() {
                         </IconButton>
                       </Tooltip>
                   </li>
+                  {servers.map((item) => {
+                    return (
+                      <li key={item.id}>
+                        <Tooltip title={item.name} placement='right'>
+                          <IconButton aria-label="delete" size="large" color="warning" onClick={()=>handleClickNavigate("/channels/"+item.id)}>
+                              <HomeIcon fontSize='60' />
+                          </IconButton>
+                        </Tooltip>
+                      </li> 
+                    )
+                  })}
               </ul>
               </div>
               

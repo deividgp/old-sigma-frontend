@@ -21,8 +21,11 @@ function App() {
   React.useEffect(() => {
     axios.get(`/user`)
       .then(res => {
-          console.log(res.data);
-          setUser(res.data);
+        console.log(res.data);
+        setUser(res.data);
+      })
+      .catch((error) =>{
+        setUser(null);
       })
   }, []);
 
