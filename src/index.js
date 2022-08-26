@@ -5,18 +5,18 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from "react-router-dom";
 import { UserProvider } from "./contexts/UserContext.js";
 import { ServersProvider } from "./contexts/ServersContext.js";
-import { UsersProvider } from "./contexts/UsersContext.js";
 import socket from "./socket.js";
+import { FriendsContext, FriendsProvider } from './contexts/FriendsContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <UserProvider>
     <ServersProvider>
-      <UsersProvider>
+      <FriendsProvider>
         <BrowserRouter>
           <App />
         </BrowserRouter>
-      </UsersProvider>
+      </FriendsProvider>
     </ServersProvider>
   </UserProvider>
 );

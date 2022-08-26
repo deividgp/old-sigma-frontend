@@ -15,7 +15,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Loading from "../components/Loading";
 import axios from "axios";
 import { ServersContext } from '../contexts/ServersContext';
-import { UsersContext } from '../contexts/UsersContext';
 import { useContext } from "react";
 
 function Home() {
@@ -24,9 +23,9 @@ function Home() {
   const [serverName, setServerName] = React.useState("");
   const [loading, setLoading] = React.useState(true);
   const { servers, setServers } = useContext(ServersContext);
-  const { pending, setPending, friends, setFriends } = useContext(UsersContext);
+  //const { pending, setPending, friends, setFriends } = useContext(UsersContext);
 
-  React.useEffect(() => {
+  /*React.useEffect(() => {
     axios.get("/loggeduser/servers")
     .then(res => {
       setServers(res.data);
@@ -41,6 +40,14 @@ function Home() {
             setLoading(false);
         })
       })
+    })
+  }, []);*/
+
+  React.useEffect(() => {
+    axios.get("/loggeduser/servers")
+    .then(res => {
+      setServers(res.data);
+      setLoading(false);
     })
   }, []);
 
