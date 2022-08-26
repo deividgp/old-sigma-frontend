@@ -11,7 +11,6 @@ function Logout() {
     React.useEffect(() => {
         axios.get(`/logout`)
         .then(res => {
-            console.log(res.data);
             setUser(null);
         })
     }, []);

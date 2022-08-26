@@ -14,6 +14,7 @@ import axios from "axios";
 import { useContext } from "react";
 import { UserContext } from "./contexts/UserContext";
 import Logout from './pages/Logout';
+import NewUser from './pages/NewUser';
 
 function App() {
   const { setUser } = useContext(UserContext);
@@ -24,7 +25,7 @@ function App() {
         console.log(res.data);
         setUser(res.data);
       })
-      .catch((error) =>{
+      .catch(() =>{
         setUser(null);
       })
   }, []);
@@ -34,6 +35,11 @@ function App() {
       <Route path="login" element={
         <LoggedIn>
           <Login />
+        </LoggedIn>
+      }/>
+      <Route path="newuser" element={
+        <LoggedIn>
+          <NewUser />
         </LoggedIn>
       }/>
       <Route path="logout" element={

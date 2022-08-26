@@ -16,14 +16,14 @@ function Me() {
         <div style={{flexGrow: "1"}}>
             <div className="barra">
                 <ul id="horizontal-list">
-                    <li><button onClick={()=>handleClickOpen(false)}>Users</button></li>
-                    <li><button onClick={()=>handleClickOpen(true)}>Pending</button></li>
+                    <li><button onClick={()=>handleClickOpen(false)}>Pending</button></li>
+                    <li><button onClick={()=>handleClickOpen(true)}>Friends</button></li>
                     
                 </ul>
             </div>
             <div className="content">
                 {
-                    windowVisible ? (<PendingFriendsList />) : (<FriendsList />)
+                    windowVisible ? (<FriendsList />) : (<PendingFriendsList />)
                 }
             </div>
         </div>

@@ -6,16 +6,19 @@ import { BrowserRouter } from "react-router-dom";
 import { UserProvider } from "./contexts/UserContext.js";
 import { ServersProvider } from "./contexts/ServersContext.js";
 import socket from "./socket.js";
-import { FriendsContext, FriendsProvider } from './contexts/FriendsContext';
+import { FriendsProvider } from './contexts/FriendsContext';
+import { PendingFriendsProvider } from './contexts/PendingFriendsContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <UserProvider>
     <ServersProvider>
       <FriendsProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <PendingFriendsProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </PendingFriendsProvider>
       </FriendsProvider>
     </ServersProvider>
   </UserProvider>

@@ -11,15 +11,14 @@ function Login() {
     const { setUser } = useContext(UserContext);
 
     const { control, handleSubmit } = useForm({
-    defaultValues: {
-        username: '',
-        password: ""
-    }
+        defaultValues: {
+            username: '',
+            password: ""
+        }
     });
     const onSubmit = data => {
         axios.post(`/login`, { username: data.username, password: data.password })
         .then(res => {
-            console.log(res.data);
             setUser(res.data);
         })
     };
