@@ -1,6 +1,14 @@
-//import './ServerChat.css';
+import { useState } from 'react';
+import './Chat.css';
 
 function Chat() {
+    const [ message, setMessage ] = useState("");
+
+    const handleMessageSubmit = (event) => {
+        event.preventDefault();
+        setMessage("");
+    }
+
     return (
         <div style={{backgroundColor: "#613d5f", height: "100%", overflowY: "hidden", flexGrow: "1", overflowX: "hidden"}}>
             <div style={{overflowY: "auto", height: "calc(100% - 50px - 15px)"}}>
@@ -24,10 +32,10 @@ function Chat() {
                     <li>hola</li>
                 </ul>
             </div>
-            <div style={{width: "calc(100vw - 472px)", height: "50px", bottom: "10px", display: "flex", position: "absolute", border: "solid 1px black"}}>
-                <span contenteditable="true" style={{flex: "1"}}>sdfsd</span>
-                <button>hola</button>
-            </div>
+            <form id="form" onSubmit={handleMessageSubmit}>
+                <input id="input" autocomplete="off" value={message} onChange={(e) => setMessage(e.target.value)} />
+                <input id="button" type="submit" value={"Send"} />
+            </form>
         </div>
     );
 }

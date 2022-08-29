@@ -8,19 +8,22 @@ import { ServersProvider } from "./contexts/ServersContext.js";
 import socket from "./socket.js";
 import { FriendsProvider } from './contexts/FriendsContext';
 import { PendingFriendsProvider } from './contexts/PendingFriendsContext';
+import { ActiveProvider } from './contexts/ActiveContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <UserProvider>
-    <ServersProvider>
-      <FriendsProvider>
-        <PendingFriendsProvider>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
-        </PendingFriendsProvider>
-      </FriendsProvider>
-    </ServersProvider>
+    <ActiveProvider>
+      <ServersProvider>
+        <FriendsProvider>
+          <PendingFriendsProvider>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </PendingFriendsProvider>
+        </FriendsProvider>
+      </ServersProvider>
+    </ActiveProvider>
   </UserProvider>
 );
 

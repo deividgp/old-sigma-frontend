@@ -28,7 +28,7 @@ function Login() {
             <header className='App-header'>
                 <img src={logo} alt="Logo"/>
             </header>
-            <body className='App-body'>
+            <div className='App-body'>
                 <main className='App-main'>
                     <div style={{backgroundColor: "#613d5f", height: "100%", overflowY: "auto" }}>
                         <div style={{ margin: "auto", width: "50%", height: "50%", padding: "10px" }}>
@@ -52,7 +52,7 @@ function Login() {
                         </div>
                     </div>
                 </main>
-            </body>
+            </div>
         </div>
     );
 }

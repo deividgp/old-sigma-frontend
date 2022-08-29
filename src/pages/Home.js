@@ -18,6 +18,7 @@ import { ServersContext } from '../contexts/ServersContext';
 import { useContext } from "react";
 import { PendingFriendsContext } from '../contexts/PendingFriendsContext';
 import { FriendsContext } from '../contexts/FriendsContext';
+import socket from "../socket";
 
 function Home() {
   const navigate = useNavigate();
@@ -39,12 +40,17 @@ function Home() {
 
         axios.get("/loggeduser/friends")
         .then(res => {
+          console.log(res.data);
           setFriends(res.data);
           setLoading(false);
         })
       })
     })
   }, []);
+
+  React.useEffect(() => {
+    
+  }, [socket])
 
   /*React.useEffect(() => {
     axios.get("/loggeduser/servers")

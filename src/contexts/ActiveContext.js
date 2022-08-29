@@ -3,11 +3,10 @@ import React, { useState } from 'react';
 export const ActiveContext = React.createContext();
 
 export const ActiveProvider = ({ children }) => {
-    const [ type, setType ] = useState();
-    const [ id, setId ] = useState();
+    const [ active, setActive ] = useState(null);
 
     return(
-        <ActiveContext.Provider value = {{ type, setType, id, setId }}>
+        <ActiveContext.Provider value = {{ active, setActive }}>
             {children}
         </ActiveContext.Provider>
     );
