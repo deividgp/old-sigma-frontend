@@ -28,3 +28,12 @@
     outline: none;
     color: #fff;
 }
+
+.sender {
+    margin-top: 5px;
+}
+
+.messages {
+    margin: 0;
+    padding: 20px;
+}

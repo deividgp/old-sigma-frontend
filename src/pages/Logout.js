@@ -4,14 +4,19 @@ import './App.css';
 import React from "react";
 import axios from 'axios';
 import Loading from "../components/Loading";
+import socket from "../socket";
 
 function Logout() {
     const { setUser } = useContext(UserContext);
 
     React.useEffect(() => {
         axios.get(`/logout`)
-        .then(res => {
+        .then(() => {
             setUser(null);
+            socket.disconnect();
+        })
+        .catch(() => {
+            console.log("error");
         })
     }, []);
 

@@ -7,7 +7,6 @@ import { PendingFriendsContext } from "../contexts/PendingFriendsContext";
 import { FriendsContext } from "../contexts/FriendsContext";
 
 function PendingFriendsList() {
-    const { user } = useContext(UserContext);
     const { pendingFriends, setPendingFriends } = useContext(PendingFriendsContext);
     const { friends, setFriends } = useContext(FriendsContext);
 

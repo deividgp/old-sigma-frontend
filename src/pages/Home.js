@@ -18,7 +18,9 @@ import { ServersContext } from '../contexts/ServersContext';
 import { useContext } from "react";
 import { PendingFriendsContext } from '../contexts/PendingFriendsContext';
 import { FriendsContext } from '../contexts/FriendsContext';
+import { ActiveContext } from '../contexts/ActiveContext';
 import socket from "../socket";
+import { UserContext } from '../contexts/UserContext';
 
 function Home() {
   const navigate = useNavigate();
@@ -28,29 +30,57 @@ function Home() {
   const { servers, setServers } = useContext(ServersContext);
   const { pendingFriends, setPendingFriends } = useContext(PendingFriendsContext);
   const { friends, setFriends } = useContext(FriendsContext);
+  const { active } = useContext(ActiveContext);
+  const { user } = useContext(UserContext);
+  const socketListener = (data) => {
+    if(data.room != active){
+      alert("You received a message!");
+    }
+  };
 
   React.useEffect(() => {
+    socket.connect();
+    const rooms = [];
+    rooms.push(user.id);
+    
     axios.get("/loggeduser/servers")
-    .then(res => {
-      setServers(res.data);
+    .then(servers => {
+      setServers(servers.data);
+      
+      servers.data.forEach((server) => {
+        rooms.push(server.id);
 
+        server.Channels.forEach((channel) => {
+          rooms.push(channel.id);
+        });
+      });
+
+      axios.get("/loggeduser/friends")
+      .then(friends => {
+        setFriends(friends.data);
+
+        friends.data.forEach((friend) => {
+          rooms.push(friend.id);
+        });
+      })
       axios.get("/loggeduser/pendingfriends")
-      .then(res => {
-        setPendingFriends(res.data);
+      .then(pending => {
+        setPendingFriends(pending.data);
 
-        axios.get("/loggeduser/friends")
-        .then(res => {
-          console.log(res.data);
-          setFriends(res.data);
-          setLoading(false);
-        })
+        socket.emit("join_room", rooms);
+
+        setLoading(false);
       })
     })
   }, []);
 
   React.useEffect(() => {
-    
-  }, [socket])
+    socket.on("receive_message", socketListener);
+
+    return () => {
+      socket.off("receive_message", socketListener);
+    };
+  }, [socket, active]);
 
   /*React.useEffect(() => {
     axios.get("/loggeduser/servers")
@@ -117,11 +147,11 @@ function Home() {
                           </IconButton>
                         </Tooltip>
                     </li>
-                    {servers.map((item) => {
+                    {servers.map((server) => {
                       return (
-                        <li key={item.id}>
-                          <Tooltip title={item.name} placement='right'>
-                            <IconButton aria-label="delete" size="large" color="warning" onClick={()=>handleClickNavigate("/channels/"+item.id)}>
+                        <li key={server.id}>
+                          <Tooltip title={server.name} placement='right'>
+                            <IconButton aria-label="delete" size="large" color="warning" onClick={()=>handleClickNavigate("/channels/"+server.id)}>
                                 <HomeIcon fontSize='60' />
                             </IconButton>
                           </Tooltip>
@@ -143,7 +173,7 @@ function Home() {
                   autoFocus
                   margin="dense"
                   id="name"
-                  label="Name or invite"
+                  label="Name"
                   type="text"
                   value={serverName}
                   onChange={handleServerNameChange}

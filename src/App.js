@@ -22,7 +22,6 @@ function App() {
   React.useEffect(() => {
     axios.get(`/user`)
       .then(res => {
-        console.log(res.data);
         setUser(res.data);
       })
       .catch(() =>{

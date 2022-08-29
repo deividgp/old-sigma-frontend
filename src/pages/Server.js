@@ -12,6 +12,7 @@ function Server() {
     useEffect(() => {
         axios.get("/servers/"+serverId+"/users")
         .then(res => {
+            console.log(res.data);
             setMembers(res.data);
         })
     }, [serverId]);
