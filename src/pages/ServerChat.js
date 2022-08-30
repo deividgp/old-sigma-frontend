@@ -1,5 +1,5 @@
 import './Chat.css';
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { ActiveContext } from "../contexts/ActiveContext";
 import axios from "axios"
@@ -8,16 +8,22 @@ import { UserContext } from '../contexts/UserContext';
 import { v4 as uuidv4 } from 'uuid';
 
 function ServerChat() {
+    const bottomRef = useRef(null);
     const { channelId } = useParams();
     const { setActive } = useContext(ActiveContext);
     const [ messages, setMessages ] = useState([]);
     const [ message, setMessage ] = useState("");
     const { user } = useContext(UserContext);
     const socketListener = (data) => {
-        if(channelId === data.room)
-            setMessages(current => [...current, data.userMessage]);
+        if(channelId !== data.room) return;
+
+        setMessages(current => [...current, data.userMessage]);
     };
     
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({behavior: 'auto'});
+    }, [messages]);
+
     const handleMessageSubmit = (event) => {
         event.preventDefault();
 
@@ -33,7 +39,7 @@ function ServerChat() {
             }
         };
 
-        socket.emit("send_message", { userMessage, room: channelId });
+        socket.emit("send_server_message", { userMessage, room: channelId });
         setMessages(current => [...current, userMessage]);
         setMessage("");
     }
@@ -53,10 +59,12 @@ function ServerChat() {
     }, [channelId]);
 
     useEffect(() => {
-        socket.on("receive_message", (data) => {
-            
-        });
-    }, [socket]);
+        socket.on("receive_server_message", socketListener);
+
+        return () => {
+            socket.off("receive_server_message", socketListener);
+        };
+    }, [socket, channelId]);
 
     return (
         <div style={{backgroundColor: "#613d5f", height: "100%", overflowY: "hidden", flexGrow: "1", overflowX: "hidden"}}>
@@ -79,6 +87,7 @@ function ServerChat() {
                         )
                     })}
                 </ul>
+                <div ref={bottomRef} />
             </div>
             <form id="form" onSubmit={handleMessageSubmit}>
                 <input id="input" autoComplete="off" value={message} onChange={(e) => setMessage(e.target.value)} />

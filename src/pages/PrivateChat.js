@@ -1,27 +1,69 @@
 import './Chat.css';
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { ActiveContext } from "../contexts/ActiveContext";
+import { UserContext } from "../contexts/UserContext";
 import socket from "../socket"
+import axios from "axios";
 
 function PrivateChat() {
+    const bottomRef = useRef(null);
+    const { user } = useContext(UserContext);
     const { userId } = useParams();
     const { setActive } = useContext(ActiveContext);
     const [ messages, setMessages ] = useState([]);
     const [ message, setMessage ] = useState("");
+    const socketListener = (data) => {
+        if(userId !== data.room) return;
+
+        //setMessages(current => [...current, data.userMessage]);
+    };
 
     const handleMessageSubmit = (event) => {
         event.preventDefault();
+
+        /*const userMessage = {
+            id: uuidv4(),
+            ChannelId: channelId,
+            UserId: user.id,
+            content: message,
+            created: Date.now(),
+            User: {
+                id: user.id,
+                username: user.username
+            }
+        };
+
+        socket.emit("send_server_message", { userMessage, room: channelId });
+        setMessages(current => [...current, userMessage]);*/
         setMessage("");
     }
 
     useEffect(() => {
+        bottomRef.current?.scrollIntoView({behavior: 'auto'});
+    }, [messages]);
+
+    useEffect(() => {
         setActive(userId);
+
+        axios.get("/loggeduser/"+userId+"/messages")
+        .then(res => {
+          console.log(res.data);
+          //setMessages(res.data);
+        })
 
         return () => {
             setActive();
         };
     }, [userId]);
+
+    useEffect(() => {
+        socket.on("receive_private_message", socketListener);
+
+        return () => {
+            socket.off("receive_private_message", socketListener);
+        };
+    }, [socket, userId]);
 
     return (
         <div style={{backgroundColor: "#613d5f", height: "100%", overflowY: "hidden", flexGrow: "1", overflowX: "hidden"}}>
@@ -44,6 +86,7 @@ function PrivateChat() {
                         )
                     })}
                 </ul>
+                <div ref={bottomRef} />
             </div>
             <form id="form" onSubmit={handleMessageSubmit}>
                 <input id="input" autoComplete="off" value={message} onChange={(e) => setMessage(e.target.value)} />

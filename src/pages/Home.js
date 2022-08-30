@@ -33,9 +33,9 @@ function Home() {
   const { active } = useContext(ActiveContext);
   const { user } = useContext(UserContext);
   const socketListener = (data) => {
-    if(data.room != active){
-      alert("You received a message!");
-    }
+    if(data.room === active) return;
+    
+    alert("You received a message!");
   };
 
   React.useEffect(() => {
@@ -75,10 +75,10 @@ function Home() {
   }, []);
 
   React.useEffect(() => {
-    socket.on("receive_message", socketListener);
+    socket.on("receive_server_message", socketListener);
 
     return () => {
-      socket.off("receive_message", socketListener);
+      socket.off("receive_server_message", socketListener);
     };
   }, [socket, active]);
 
@@ -123,6 +123,7 @@ function Home() {
           <div>
             <div className='App-header'>
               <img src={logo} alt="Logo"/>
+              <h2 style={{display: "inherit", alignItems: "center"}}>{user.username}</h2>
               <nav>
                 <ul>
                   <li><Link to="/about">About</Link></li>
