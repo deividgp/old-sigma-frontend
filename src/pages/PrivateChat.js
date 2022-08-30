@@ -5,27 +5,27 @@ import { ActiveContext } from "../contexts/ActiveContext";
 import { UserContext } from "../contexts/UserContext";
 import socket from "../socket"
 import axios from "axios";
+import { v4 as uuidv4 } from 'uuid';
 
 function PrivateChat() {
     const bottomRef = useRef(null);
     const { user } = useContext(UserContext);
     const { userId } = useParams();
     const { setActive } = useContext(ActiveContext);
-    const [ messages, setMessages ] = useState([]);
-    const [ message, setMessage ] = useState("");
+    const [messages, setMessages] = useState([]);
+    const [message, setMessage] = useState("");
     const socketListener = (data) => {
-        if(userId !== data.room) return;
-
-        //setMessages(current => [...current, data.userMessage]);
+        if (userId !== data.room) return;
+        setMessages(current => [...current, data.userMessage]);
     };
 
     const handleMessageSubmit = (event) => {
         event.preventDefault();
 
-        /*const userMessage = {
+        const userMessage = {
             id: uuidv4(),
-            ChannelId: channelId,
             UserId: user.id,
+            MessageUserId: userId,
             content: message,
             created: Date.now(),
             User: {
@@ -34,23 +34,22 @@ function PrivateChat() {
             }
         };
 
-        socket.emit("send_server_message", { userMessage, room: channelId });
-        setMessages(current => [...current, userMessage]);*/
+        socket.emit("send_private_message", { userMessage, room: userId });
+        setMessages(current => [...current, userMessage]);
         setMessage("");
     }
 
     useEffect(() => {
-        bottomRef.current?.scrollIntoView({behavior: 'auto'});
+        bottomRef.current?.scrollIntoView({ behavior: 'auto' });
     }, [messages]);
 
     useEffect(() => {
         setActive(userId);
 
-        axios.get("/loggeduser/"+userId+"/messages")
-        .then(res => {
-          console.log(res.data);
-          //setMessages(res.data);
-        })
+        axios.get("/loggeduser/" + userId + "/messages")
+            .then(res => {
+                setMessages(res.data);
+            })
 
         return () => {
             setActive();
@@ -66,18 +65,18 @@ function PrivateChat() {
     }, [socket, userId]);
 
     return (
-        <div style={{backgroundColor: "#613d5f", height: "100%", overflowY: "hidden", flexGrow: "1", overflowX: "hidden"}}>
-            <div style={{overflowY: "auto", height: "calc(100% - 50px - 15px)"}}>
+        <div style={{ backgroundColor: "#613d5f", height: "100%", overflowY: "hidden", flexGrow: "1", overflowX: "hidden" }}>
+            <div style={{ overflowY: "auto", height: "calc(100% - 50px - 15px)" }}>
                 <ul className='messages'>
                     {messages.map((message) => {
                         return (
                             <li key={message.id}>
                                 <div className='sender'>
-                                    <span style={{fontWeight: "bold"}}>
+                                    <span style={{ fontWeight: "bold" }}>
                                         {message.User.username}
                                     </span>
                                     &nbsp;
-                                    <span style={{fontSize: "10px"}}>
+                                    <span style={{ fontSize: "10px" }}>
                                         {new Date(message.created).toLocaleString()}
                                     </span>
                                 </div>

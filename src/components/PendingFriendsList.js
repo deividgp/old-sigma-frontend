@@ -12,18 +12,18 @@ function PendingFriendsList() {
 
     const acceptFriend = (id) => {
         axios.put(`/loggeduser/acceptfriend`, { userId: id })
-        .then((user) => {
-            setPendingFriends(pendingFriends.filter(friend => friend.id !== id));
-            console.log(user.data);
-            setFriends(current => [...current, user.data]);
-        })
+            .then((user) => {
+                setPendingFriends(pendingFriends.filter(friend => friend.id !== id));
+                console.log(user.data);
+                setFriends(current => [...current, user.data]);
+            })
     };
 
     const ignoreFriend = (id) => {
-        axios.delete("/loggeduser/"+id+"/ignorefriend")
-        .then(() => {
-            setPendingFriends(pendingFriends.filter(friend => friend.id !== id));
-        })
+        axios.delete("/loggeduser/" + id + "/ignorefriend")
+            .then(() => {
+                setPendingFriends(pendingFriends.filter(friend => friend.id !== id));
+            })
     };
 
     return (
@@ -34,7 +34,7 @@ function PendingFriendsList() {
                         {pendingFriend.username}
                         <button onClick={() => acceptFriend(pendingFriend.id)}>Accept</button>
                         <button onClick={() => ignoreFriend(pendingFriend.id)}>Ignore</button>
-                    </li> 
+                    </li>
                 )
             })}
         </ul>

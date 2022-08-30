@@ -9,7 +9,7 @@
 }
 
 ul#horizontal-list li {
-    display: inline;
+    display: inline-block;
     margin-right: 50px;
 }
 

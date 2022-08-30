@@ -11,13 +11,13 @@ function Logout() {
 
     React.useEffect(() => {
         axios.get(`/logout`)
-        .then(() => {
-            setUser(null);
-            socket.disconnect();
-        })
-        .catch(() => {
-            console.log("error");
-        })
+            .then(() => {
+                setUser(null);
+                socket.disconnect();
+            })
+            .catch(() => {
+                console.log("error");
+            })
     }, []);
 
     return (

@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom';
 
 export function NotLoggedIn({ children }) {
     const { user } = useContext(UserContext);
-    
+
     if (user == null)
         return <Navigate to="/login" />
 
@@ -13,7 +13,7 @@ export function NotLoggedIn({ children }) {
 
 export function LoggedIn({ children }) {
     const { user } = useContext(UserContext);
-    
+
     if (user != null)
         return <Navigate to="/" />
 

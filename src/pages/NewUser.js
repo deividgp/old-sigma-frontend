@@ -9,7 +9,7 @@ function NewUser() {
 
     return (
         <div>
-            
+
         </div>
     );
 }

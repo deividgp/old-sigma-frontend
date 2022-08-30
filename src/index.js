@@ -9,20 +9,23 @@ import socket from "./socket.js";
 import { FriendsProvider } from './contexts/FriendsContext';
 import { PendingFriendsProvider } from './contexts/PendingFriendsContext';
 import { ActiveProvider } from './contexts/ActiveContext';
+import { OnlineUsersProvider } from './contexts/OnlineUsersContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <UserProvider>
     <ActiveProvider>
-      <ServersProvider>
-        <FriendsProvider>
-          <PendingFriendsProvider>
-            <BrowserRouter>
-              <App />
-            </BrowserRouter>
-          </PendingFriendsProvider>
-        </FriendsProvider>
-      </ServersProvider>
+      <OnlineUsersProvider>
+        <ServersProvider>
+          <FriendsProvider>
+            <PendingFriendsProvider>
+              <BrowserRouter>
+                <App />
+              </BrowserRouter>
+            </PendingFriendsProvider>
+          </FriendsProvider>
+        </ServersProvider>
+      </OnlineUsersProvider>
     </ActiveProvider>
   </UserProvider>
 );

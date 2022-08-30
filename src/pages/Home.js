@@ -19,6 +19,7 @@ import { useContext } from "react";
 import { PendingFriendsContext } from '../contexts/PendingFriendsContext';
 import { FriendsContext } from '../contexts/FriendsContext';
 import { ActiveContext } from '../contexts/ActiveContext';
+import { OnlineUsersContext } from '../contexts/OnlineUsersContext';
 import socket from "../socket";
 import { UserContext } from '../contexts/UserContext';
 
@@ -28,67 +29,66 @@ function Home() {
   const [serverName, setServerName] = React.useState("");
   const [loading, setLoading] = React.useState(true);
   const { servers, setServers } = useContext(ServersContext);
-  const { pendingFriends, setPendingFriends } = useContext(PendingFriendsContext);
-  const { friends, setFriends } = useContext(FriendsContext);
+  const { setPendingFriends } = useContext(PendingFriendsContext);
+  const { setFriends } = useContext(FriendsContext);
+  const { setOnlineUsers } = useContext(OnlineUsersContext);
   const { active } = useContext(ActiveContext);
   const { user } = useContext(UserContext);
   const socketListener = (data) => {
-    if(data.room === active) return;
-    
+    if (data.room === active) return;
+
     alert("You received a message!");
   };
 
   React.useEffect(() => {
-    socket.connect();
     const rooms = [];
-    rooms.push(user.id);
-    
+
+    socket.emit("get_online_users");
+
     axios.get("/loggeduser/servers")
-    .then(servers => {
-      setServers(servers.data);
-      
-      servers.data.forEach((server) => {
-        rooms.push(server.id);
+      .then(servers => {
+        setServers(servers.data);
+        console.log(servers.data);
+        servers.data.forEach((server) => {
+          rooms.push(server.id);
 
-        server.Channels.forEach((channel) => {
-          rooms.push(channel.id);
+          server.Channels.forEach((channel) => {
+            rooms.push(channel.id);
+          });
         });
-      });
 
-      axios.get("/loggeduser/friends")
-      .then(friends => {
-        setFriends(friends.data);
+        axios.get("/loggeduser/friends")
+          .then(friends => {
+            setFriends(friends.data);
+          })
+        axios.get("/loggeduser/pendingfriends")
+          .then(pending => {
+            setPendingFriends(pending.data);
+            socket.emit("join_room", rooms);
 
-        friends.data.forEach((friend) => {
-          rooms.push(friend.id);
-        });
+            setLoading(false);
+          })
       })
-      axios.get("/loggeduser/pendingfriends")
-      .then(pending => {
-        setPendingFriends(pending.data);
-
-        socket.emit("join_room", rooms);
-
-        setLoading(false);
-      })
-    })
   }, []);
 
   React.useEffect(() => {
     socket.on("receive_server_message", socketListener);
-
+    socket.on("receive_private_message", socketListener);
     return () => {
       socket.off("receive_server_message", socketListener);
+      socket.off("receive_private_message", socketListener);
     };
   }, [socket, active]);
 
-  /*React.useEffect(() => {
-    axios.get("/loggeduser/servers")
-    .then(res => {
-      setServers(res.data);
-      setLoading(false);
-    })
-  }, []);*/
+  React.useEffect(() => {
+    socket.on("online_users", (data) => {
+      console.log(data);
+      setOnlineUsers(data);
+    });
+    return () => {
+      socket.removeAllListeners("online_users");
+    };
+  }, [socket]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -115,80 +115,80 @@ function Home() {
     <div>
       {
         loading ?
-        (
-          <Loading />
-        )
-        :
-        (
-          <div>
-            <div className='App-header'>
-              <img src={logo} alt="Logo"/>
-              <h2 style={{display: "inherit", alignItems: "center"}}>{user.username}</h2>
-              <nav>
-                <ul>
-                  <li><Link to="/about">About</Link></li>
-                  <li><Link to="/logout">Logout</Link></li>
-                </ul>
-              </nav>
-            </div>
-            <div className='App-body'>
-              <div className='ServersList'>
-                <ul>
+          (
+            <Loading />
+          )
+          :
+          (
+            <div>
+              <div className='App-header'>
+                <img src={logo} alt="Logo" />
+                <h2 style={{ display: "inherit", alignItems: "center" }}>{user.username}</h2>
+                <nav>
+                  <ul>
+                    <li><Link to="/about">About</Link></li>
+                    <li><Link to="/logout">Logout</Link></li>
+                  </ul>
+                </nav>
+              </div>
+              <div className='App-body'>
+                <div className='ServersList'>
+                  <ul>
                     <li>
-                        <Tooltip title="Home" placement='right'>
-                          <IconButton aria-label="delete" size="large" color="warning" onClick={() => handleClickNavigate("/channels/@me")}>
-                              <HomeIcon fontSize='60' />
-                          </IconButton>
-                        </Tooltip>
+                      <Tooltip title="Home" placement='right'>
+                        <IconButton aria-label="delete" size="large" color="warning" onClick={() => handleClickNavigate("/channels/@me")}>
+                          <HomeIcon fontSize='60' />
+                        </IconButton>
+                      </Tooltip>
                     </li>
                     <li>
-                        <Tooltip title="Add" placement='right'>
-                          <IconButton aria-label="delete" size="large" color="warning" onClick={handleClickOpen}>
-                              <AddIcon fontSize='60' />
-                          </IconButton>
-                        </Tooltip>
+                      <Tooltip title="Add" placement='right'>
+                        <IconButton aria-label="delete" size="large" color="warning" onClick={handleClickOpen}>
+                          <AddIcon fontSize='60' />
+                        </IconButton>
+                      </Tooltip>
                     </li>
                     {servers.map((server) => {
                       return (
                         <li key={server.id}>
                           <Tooltip title={server.name} placement='right'>
-                            <IconButton aria-label="delete" size="large" color="warning" onClick={()=>handleClickNavigate("/channels/"+server.id)}>
-                                <HomeIcon fontSize='60' />
+                            <IconButton aria-label="delete" size="large" color="warning" onClick={() => handleClickNavigate("/channels/" + server.id)}>
+                              <HomeIcon fontSize='60' />
                             </IconButton>
                           </Tooltip>
-                        </li> 
+                        </li>
                       )
                     })}
-                </ul>
-              </div>
-              
-              <div className='App-main' style={{ paddingLeft: "72px" }}>
-                <Outlet/>
-              </div>
-            </div>
+                  </ul>
+                </div>
 
-            <Dialog open={open} onClose={handleClose}>
-              <DialogTitle>Create or join a server</DialogTitle>
-              <DialogContent>
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  id="name"
-                  label="Name"
-                  type="text"
-                  value={serverName}
-                  onChange={handleServerNameChange}
-                  fullWidth
-                  variant="standard"
-                />
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleClose}>Cancel</Button>
-                <Button onClick={handleServerNameSubmit}>Create or join</Button>
-              </DialogActions>
-            </Dialog>
-          </div>
-        )
+                <div className='App-main' style={{ paddingLeft: "72px" }}>
+                  <Outlet />
+                </div>
+              </div>
+
+              <Dialog open={open} onClose={handleClose}>
+                <DialogTitle>Create or join a server</DialogTitle>
+                <DialogContent>
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="name"
+                    label="Name"
+                    type="text"
+                    value={serverName}
+                    onChange={handleServerNameChange}
+                    fullWidth
+                    variant="standard"
+                  />
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleClose}>Cancel</Button>
+                  <Button onClick={handleServerNameSubmit}>Create or join</Button>
+                </DialogActions>
+              </Dialog>
+            </div>
+          )
       }
     </div>
   );

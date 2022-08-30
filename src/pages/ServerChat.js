@@ -11,17 +11,16 @@ function ServerChat() {
     const bottomRef = useRef(null);
     const { channelId } = useParams();
     const { setActive } = useContext(ActiveContext);
-    const [ messages, setMessages ] = useState([]);
-    const [ message, setMessage ] = useState("");
+    const [messages, setMessages] = useState([]);
+    const [message, setMessage] = useState("");
     const { user } = useContext(UserContext);
     const socketListener = (data) => {
-        if(channelId !== data.room) return;
-
+        if (channelId !== data.room) return;
         setMessages(current => [...current, data.userMessage]);
     };
-    
+
     useEffect(() => {
-        bottomRef.current?.scrollIntoView({behavior: 'auto'});
+        bottomRef.current?.scrollIntoView({ behavior: 'auto' });
     }, [messages]);
 
     const handleMessageSubmit = (event) => {
@@ -46,12 +45,11 @@ function ServerChat() {
 
     useEffect(() => {
         setActive(channelId);
-        
-        axios.get("/channels/"+channelId+"/messages")
-        .then(res => {
-          console.log(res.data);
-          setMessages(res.data);
-        })
+
+        axios.get("/channels/" + channelId + "/messages")
+            .then(res => {
+                setMessages(res.data);
+            })
 
         return () => {
             setActive();
@@ -67,18 +65,18 @@ function ServerChat() {
     }, [socket, channelId]);
 
     return (
-        <div style={{backgroundColor: "#613d5f", height: "100%", overflowY: "hidden", flexGrow: "1", overflowX: "hidden"}}>
-            <div style={{overflowY: "auto", height: "calc(100% - 50px - 15px)"}}>
+        <div style={{ backgroundColor: "#613d5f", height: "100%", overflowY: "hidden", flexGrow: "1", overflowX: "hidden" }}>
+            <div style={{ overflowY: "auto", height: "calc(100% - 50px - 15px)" }}>
                 <ul className='messages'>
                     {messages.map((message) => {
                         return (
                             <li key={message.id}>
                                 <div className='sender'>
-                                    <span style={{fontWeight: "bold"}}>
+                                    <span style={{ fontWeight: "bold" }}>
                                         {message.User.username}
                                     </span>
                                     &nbsp;
-                                    <span style={{fontSize: "10px"}}>
+                                    <span style={{ fontSize: "10px" }}>
                                         {new Date(message.created).toLocaleString()}
                                     </span>
                                 </div>

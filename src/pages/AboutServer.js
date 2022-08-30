@@ -14,8 +14,10 @@ function AboutServer() {
     }, [serverId]);
 
     return (
-        <div style={{backgroundColor: "#613d5f", height: "100%", overflowY: "auto", flexGrow: "1"}}>
-            {description}
+        <div style={{ backgroundColor: "#613d5f", height: "100%", overflowY: "auto", flexGrow: "1" }}>
+            <div style={{ padding: "20px" }}>
+                {description}
+            </div>
         </div>
     );
 }

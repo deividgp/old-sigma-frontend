@@ -15,6 +15,7 @@ import { useContext } from "react";
 import { UserContext } from "./contexts/UserContext";
 import Logout from './pages/Logout';
 import NewUser from './pages/NewUser';
+import socket from "./socket"
 
 function App() {
   const { setUser } = useContext(UserContext);
@@ -23,9 +24,15 @@ function App() {
     axios.get(`/user`)
       .then(res => {
         setUser(res.data);
+        const userid = res.data.id;
+        socket.auth = { userid };
+        socket.connect();
+        socket.emit("join_room", userid);
       })
-      .catch(() =>{
+      .catch(() => {
         setUser(null);
+        console.log("holaaa3");
+        socket.disconnect();
       })
   }, []);
 
@@ -35,32 +42,32 @@ function App() {
         <LoggedIn>
           <Login />
         </LoggedIn>
-      }/>
+      } />
       <Route path="newuser" element={
         <LoggedIn>
           <NewUser />
         </LoggedIn>
-      }/>
+      } />
       <Route path="logout" element={
         <NotLoggedIn>
           <Logout />
         </NotLoggedIn>
-      }/>
-      <Route path="/" element={ 
+      } />
+      <Route path="/" element={
         <NotLoggedIn>
           <Home />
         </NotLoggedIn>
       }>
-        <Route index element={ <Me /> }/>
-        <Route path="about" element={<About />}/>
+        <Route index element={<Me />} />
+        <Route path="about" element={<About />} />
         <Route path="channels">
-          <Route path="@me" element={ <Private /> }>
-            <Route index element={<Me />}/>
-            <Route path=":userId" element={<PrivateChat />}/>
+          <Route path="@me" element={<Private />}>
+            <Route index element={<Me />} />
+            <Route path=":userId" element={<PrivateChat />} />
           </Route>
-          <Route path=":serverId" element={ <Server /> }>
-            <Route index element={<AboutServer />}/>
-            <Route path=":channelId" element={<ServerChat />}/>
+          <Route path=":serverId" element={<Server />}>
+            <Route index element={<AboutServer />} />
+            <Route path=":channelId" element={<ServerChat />} />
           </Route>
         </Route>
       </Route>

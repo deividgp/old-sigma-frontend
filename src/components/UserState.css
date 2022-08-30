@@ -1,0 +1,14 @@
+li > span {
+    float: left;
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+}
+
+.green {
+    background-color: green;
+}
+
+.grey {
+    background-color: grey;
+}

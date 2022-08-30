@@ -4,8 +4,7 @@ import { ServersContext } from '../contexts/ServersContext';
 import { useContext } from "react";
 import './List.css';
 
-function ChannelsList(props) {
-    const serverId = props.serverId;
+function ChannelsList({ serverId, isOwner }) {
     const [channels, setChannels] = React.useState([]);
     const { servers } = useContext(ServersContext);
 
@@ -15,21 +14,29 @@ function ChannelsList(props) {
     }, [serverId]);
 
     return (
-        <div style={{backgroundColor: "#2B3180", minWidth: "200px", maxWidth: "200px", overflowY: "auto"}}>
+        <div style={{ backgroundColor: "#2B3180", minWidth: "200px", maxWidth: "200px", overflowY: "auto" }}>
             <ul className='list'>
                 <li><NavLink style={({ isActive }) => ({
-                        color: isActive ? '#E95B0D' : "inherit"
-                    })} to={"/channels/"+serverId} end>About server</NavLink></li>
+                    color: isActive ? '#E95B0D' : "inherit"
+                })} to={"/channels/" + serverId} end>About server</NavLink></li>
                 <li>&nbsp;</li>
                 <li><b>CHANNELS</b></li>
                 <li>&nbsp;</li>
                 {channels.map((channel) => {
                     return (
                         <li key={channel.id}>
-                        <NavLink style={({ isActive }) => ({
-                            color: isActive ? '#E95B0D' : "inherit"
-                        })} to={"/channels/"+serverId+"/"+channel.id}>{channel.name}</NavLink>
-                        </li> 
+                            <NavLink style={({ isActive }) => ({
+                                color: isActive ? '#E95B0D' : "inherit"
+                            })} to={"/channels/" + serverId + "/" + channel.id}>{channel.name}</NavLink>
+                            &nbsp;
+                            {
+                                isOwner
+                                    ?
+                                    (<button>Delete</button>)
+                                    :
+                                    ""
+                            }
+                        </li>
                     )
                 })}
             </ul>
