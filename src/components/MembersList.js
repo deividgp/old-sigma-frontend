@@ -2,10 +2,19 @@ import "./UserState.css";
 import { useContext } from "react";
 import { OnlineUsersContext } from '../contexts/OnlineUsersContext';
 import { UserContext } from "../contexts/UserContext";
+import axios from "axios";
+import socket from '../socket';
 
-function MembersList({ members, isOwner }) {
+function MembersList({ server, members, isOwner }) {
     const { onlineUsers } = useContext(OnlineUsersContext);
     const { user } = useContext(UserContext);
+
+    const kickMember = (memberId) => {
+        axios.delete("/servers/" + server.id + "/" + memberId)
+            .then(() => {
+                socket.emit("action", { room: memberId, action: "user_kicked", server });
+            });
+    };
 
     return (
         <div style={{ backgroundColor: "#2B3180", minWidth: "200px", maxWidth: "200px", overflowY: "auto" }}>
@@ -20,9 +29,9 @@ function MembersList({ members, isOwner }) {
                             {member.username}
                             &nbsp;
                             {
-                                isOwner && member.id != user.id
+                                isOwner && member.id !== user.id
                                     ?
-                                    (<button>Kick</button>)
+                                    (<button onClick={() => kickMember(member.id)}>Kick</button>)
                                     :
                                     ""
                             }

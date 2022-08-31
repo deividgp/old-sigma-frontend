@@ -34,6 +34,7 @@ function Home() {
   const { setOnlineUsers } = useContext(OnlineUsersContext);
   const { active } = useContext(ActiveContext);
   const { user } = useContext(UserContext);
+  
   const socketListener = (data) => {
     if (data.room === active) return;
 
@@ -63,6 +64,7 @@ function Home() {
           })
         axios.get("/loggeduser/pendingfriends")
           .then(pending => {
+            console.log(pending.data);
             setPendingFriends(pending.data);
             socket.emit("join_room", rooms);
 
@@ -74,9 +76,20 @@ function Home() {
   React.useEffect(() => {
     socket.on("receive_server_message", socketListener);
     socket.on("receive_private_message", socketListener);
+    socket.on("channel_deleted", (data) => {
+      axios.get("/loggeduser/servers")
+        .then(servers => {
+          if (data.channelId === active)
+            navigate("/", { replace: true });
+          setServers(servers.data);
+          socket.emit("leave_room", data.channelId);
+        });
+    });
+
     return () => {
       socket.off("receive_server_message", socketListener);
       socket.off("receive_private_message", socketListener);
+      socket.removeAllListeners("channel_deleted");
     };
   }, [socket, active]);
 
@@ -102,36 +115,48 @@ function Home() {
         });
     });
 
-    socket.on("channel_deleted", (data) => {
+    socket.on("user_kicked", (data) => {
       axios.get("/loggeduser/servers")
         .then(servers => {
-          if (data.channelId == active)
-            navigate("/", { replace: true });
           setServers(servers.data);
-          socket.emit("leave_room", data.channelId);
+          const rooms = [];
+
+          rooms.push(data.server.id);
+          data.server.Channels.forEach((channel) => {
+            rooms.push(channel.id);
+          });
+
+          socket.emit("leave_room", rooms);
         });
+    });
+
+    socket.on("friend_accepted", (data) => {
+      setFriends(current => [...current, data.user]);
+    });
+
+    socket.on("friend_deleted", (data) => {
+      if (active === data.friendId)
+        navigate("/", { replace: true });
+      setFriends(current => current.filter(friend => friend.id !== data.friendId));
+    });
+
+    socket.on("friend_added", (data) => {
+      setPendingFriends(current => [...current, data.user]);
     });
 
     return () => {
       socket.removeAllListeners("online_users");
       socket.removeAllListeners("server_deleted");
+      socket.removeAllListeners("channel_created");
+      socket.removeAllListeners("user_kicked");
+      socket.removeAllListeners("friend_accepted");
+      socket.removeAllListeners("friend_deleted");
+      socket.removeAllListeners("friend_added");
     };
   }, [socket]);
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   const handleClickNavigate = (route) => {
     navigate(route, { replace: true });
-  };
-
-  const handleServerNameChange = (event) => {
-    setServerName(event.target.value);
   };
 
   const handleServerNameSubmit = () => {
@@ -171,7 +196,7 @@ function Home() {
                     </li>
                     <li>
                       <Tooltip title="Add" placement='right'>
-                        <IconButton aria-label="delete" size="large" color="warning" onClick={handleClickOpen}>
+                        <IconButton aria-label="delete" size="large" color="warning" onClick={() => setOpen(true)}>
                           <AddIcon fontSize='60' />
                         </IconButton>
                       </Tooltip>
@@ -195,7 +220,7 @@ function Home() {
                 </div>
               </div>
 
-              <Dialog open={open} onClose={handleClose}>
+              <Dialog open={open} onClose={() => setOpen(false)}>
                 <DialogTitle>Create or join a server</DialogTitle>
                 <DialogContent>
                   <TextField
@@ -205,13 +230,13 @@ function Home() {
                     label="Name"
                     type="text"
                     value={serverName}
-                    onChange={handleServerNameChange}
+                    onChange={(event) => setServerName(event.target.value)}
                     fullWidth
                     variant="standard"
                   />
                 </DialogContent>
                 <DialogActions>
-                  <Button onClick={handleClose}>Cancel</Button>
+                  <Button onClick={() => setOpen(false)}>Cancel</Button>
                   <Button onClick={handleServerNameSubmit}>Create or join</Button>
                 </DialogActions>
               </Dialog>

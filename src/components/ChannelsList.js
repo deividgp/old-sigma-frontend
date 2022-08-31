@@ -1,25 +1,19 @@
 import * as React from 'react';
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { ServersContext } from '../contexts/ServersContext';
 import { useContext } from "react";
 import './List.css';
 import axios from "axios"
 import socket from '../socket';
 
-function ChannelsList({ serverId, isOwner }) {
-    const [channels, setChannels] = React.useState([]);
-    const { servers, setServers } = useContext(ServersContext);
+function ChannelsList({ serverId, isOwner, channels }) {
+    const { setServers } = useContext(ServersContext);
     const [channelName, setChannelName] = React.useState("");
     const navigate = useNavigate();
 
-    React.useEffect(() => {
-        const serverAux = servers.find(server => server.id === serverId);
-        setChannels(serverAux.Channels);
-    }, [serverId, servers]);
-
     const handleSubmit = (event) => {
         event.preventDefault();
-        setChannelName("");
+        if (channelName === "") return;
 
         axios.post("/channels/", { name: channelName, serverId: serverId })
             .then((channel) => {
@@ -30,6 +24,7 @@ function ChannelsList({ serverId, isOwner }) {
                         socket.emit("action", { room: serverId, action: "channel_created", channelId: channel.data.id });
                     });
             });
+        setChannelName("");
     }
 
     const deleteChannel = (channelId) => {
@@ -53,6 +48,18 @@ function ChannelsList({ serverId, isOwner }) {
                         setServers(servers.data);
                         socket.emit("leave_room", serverId);
                         socket.emit("action", { room: serverId, action: "server_deleted" });
+                    });
+            });
+    };
+
+    const leaveServer = () => {
+        axios.delete("/loggeduser/" + serverId + "/" + leaveServer)
+            .then(() => {
+                axios.get("/loggeduser/servers")
+                    .then(servers => {
+                        navigate("/", { replace: true });
+                        setServers(servers.data);
+                        socket.emit("leave_room", serverId);
                     });
             });
     };
@@ -97,17 +104,19 @@ function ChannelsList({ serverId, isOwner }) {
                 })}
             </ul>
 
-            {
-                isOwner
-                    ?
-                    (
-                        <div style={{ width: "50%", margin: "0 auto" }}>
+            <div style={{ width: "50%", margin: "0 auto" }}>
+                {
+                    isOwner
+                        ?
+                        (
                             <button onClick={deleteServer}>Delete server</button>
-                        </div>
-                    )
-                    :
-                    ""
-            }
+                        )
+                        :
+                        (
+                            <button onClick={leaveServer}>Leave server</button>
+                        )
+                }
+            </div>
         </div>
     );
 }

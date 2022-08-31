@@ -5,10 +5,12 @@ import "./Me.css";
 import FriendsList from "../components/FriendsList";
 import PendingFriendsList from "../components/PendingFriendsList";
 import axios from "axios";
+import socket from "../socket";
 
 function Me() {
     const [windowVisible, setWindowVisible] = React.useState(false);
     const [name, setName] = React.useState("");
+    const { user } = useContext(UserContext);
 
     const handleClickOpen = (value) => {
         setWindowVisible(value);
@@ -16,10 +18,18 @@ function Me() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        axios.put(`/loggeduser/addfriend`, { username: name })
-            .then(res => {
-                setName("");
-            })
+
+        if (user.username != name) {
+            axios.put(`/loggeduser/addfriend`, { username: name })
+                .then((res) => {
+                    socket.emit("action", { room: res.data.id, action: "friend_added", user: { id: user.id, username: user.username } });
+                    alert("Request sent");
+                })
+                .catch(() => {
+                    alert("Error");
+                })
+        }
+        setName("");
     }
 
     return (
@@ -35,6 +45,7 @@ function Me() {
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                             />
+                            &nbsp;
                             <input type="submit" value={"Add friend"} />
                         </form>
                     </li>

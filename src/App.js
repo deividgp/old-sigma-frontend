@@ -31,7 +31,6 @@ function App() {
       })
       .catch(() => {
         setUser(null);
-        console.log("holaaa3");
         socket.disconnect();
       })
   }, []);
