@@ -48,7 +48,7 @@ function Home() {
     axios.get("/loggeduser/servers")
       .then(servers => {
         setServers(servers.data);
-        console.log(servers.data);
+
         servers.data.forEach((server) => {
           rooms.push(server.id);
 
@@ -82,11 +82,39 @@ function Home() {
 
   React.useEffect(() => {
     socket.on("online_users", (data) => {
-      console.log(data);
       setOnlineUsers(data);
     });
+
+    socket.on("server_deleted", (data) => {
+      axios.get("/loggeduser/servers")
+        .then(servers => {
+          navigate("/", { replace: true });
+          setServers(servers.data);
+          socket.emit("leave_room", data.room);
+        });
+    });
+
+    socket.on("channel_created", (data) => {
+      axios.get("/loggeduser/servers")
+        .then(servers => {
+          setServers(servers.data);
+          socket.emit("join_room", data.channelId);
+        });
+    });
+
+    socket.on("channel_deleted", (data) => {
+      axios.get("/loggeduser/servers")
+        .then(servers => {
+          if (data.channelId == active)
+            navigate("/", { replace: true });
+          setServers(servers.data);
+          socket.emit("leave_room", data.channelId);
+        });
+    });
+
     return () => {
       socket.removeAllListeners("online_users");
+      socket.removeAllListeners("server_deleted");
     };
   }, [socket]);
 

@@ -18,11 +18,13 @@ function FriendsList() {
             {friends.map((friend) => {
                 return (
                     <li key={friend.id}>
-                        <span className={onlineUsers.includes(friend.id) ? "green" : "grey"}/>
+                        <span className={onlineUsers.includes(friend.id) ? "green" : "grey"} />
                         &nbsp;
                         <NavLink style={({ isActive }) => ({
                             color: isActive ? '#E95B0D' : "inherit"
                         })} to={"/channels/@me/" + friend.id}>{friend.username}</NavLink>
+                        &nbsp;
+                        <button>Remove friend</button>
                     </li>
                 )
             })}
