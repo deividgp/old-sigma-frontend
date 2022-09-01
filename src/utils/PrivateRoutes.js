@@ -14,7 +14,7 @@ export function NotLoggedIn({ children }) {
 export function LoggedIn({ children }) {
     const { user } = useContext(UserContext);
 
-    if (user != null)
+    if (user != null && user !== "user")
         return <Navigate to="/" />
 
     return children;

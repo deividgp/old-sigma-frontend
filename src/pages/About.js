@@ -2,20 +2,22 @@ function About() {
     return (
         <div style={{ backgroundColor: "#613d5f", height: "100%", overflowY: "auto" }}>
             <div style={{ padding: "20px" }}>
-                L’aplicació que tinc pensat fer serà una aplicació de missatgeria semblant a Discord,
-                una aplicació basada en servidors (grups públics o privats on usuaris poden interactuar mitjançant
-                diferents canals que funcionen com a petits fórums per parlar d’un tema en concret) per l’àmbit gaming
-                i casual. La diferència és que vull enfocar la meva aplicació en l’àmbit professional i empresarial
-                principalment tot i que també tenen cabuda els sectors mencionats anteriorment, depenent de l’estructura
-                del servidor perquè la idea és fer-los altament configurables afegint canals i rols per controlar l’accés
-                dels usuaris entre altres opcions. També tindrà certa semblança amb Slack però el que no m’agrada d’aquesta
-                plataforma és que se centra massa en els grups. Aquesta part la vull enfocar més com Discord perquè a part
-                d’interactuar amb servidors també es podrà xatejar amb usuaris per privat sense necessitat d’estar dins
-                d’un servidor. A més, també vull integrar tots els accesos dels grups en una sola pàgina com fa Discord
-                perquè a la versió web de Slack es necessita sortir d’un servidor per entrar a un altre.
-                En resum: single-page application a totes les plataformes.
+                The app I'm planning to make will be a messaging app similar to Discord, an app
+                based on servers (public or private groups where users can interact through
+                different channels that work like small forums to discuss a specific topic)
+                for the 'gaming and casual area. The difference is that I want to focus my
+                application on the professional and enterprise area mainly although the sectors
+                mentioned above also have a place, depending on the server structure because the
+                idea is to make them highly configurable by adding channels and roles to control
+                user access among other options. It will also have some similarity to Slack but
+                what I don't like about this platform is that it focuses too much on groups.
+                I want to approach this part more like Discord because apart from interacting
+                with servers you can also chat with users privately without needing to be inside
+                a server. In addition, I also want to integrate all access to the groups on a
+                single page like Discord does because in the web version of Slack you need to
+                leave one server to enter another. In short: single-page application on all platforms.
             </div>
-            
+
         </div>
     );
 }

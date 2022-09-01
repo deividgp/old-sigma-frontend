@@ -2,7 +2,6 @@ import * as React from 'react';
 import { NavLink, useNavigate } from "react-router-dom";
 import { ServersContext } from '../contexts/ServersContext';
 import { useContext } from "react";
-import './List.css';
 import axios from "../axios";
 import socket from '../socket';
 

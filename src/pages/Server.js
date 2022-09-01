@@ -1,7 +1,6 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useParams } from "react-router-dom";
 import ChannelsList from "../components/ChannelsList";
 import MembersList from "../components/MembersList";
-import { useParams } from 'react-router-dom';
 import { useEffect, useState, useContext } from "react";
 import axios from "../axios";
 import { ServersContext } from '../contexts/ServersContext';
