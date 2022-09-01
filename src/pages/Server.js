@@ -15,7 +15,7 @@ function Server() {
     const [isOwner, setIsOwner] = useState(false);
     const { servers } = useContext(ServersContext);
     const { user } = useContext(UserContext);
-    const [server, setServer] = useState();
+    const [rooms, setRooms] = useState([]);
 
     useEffect(() => {
         axios.get("/servers/" + serverId + "/users")
@@ -23,7 +23,12 @@ function Server() {
                 setMembers(res.data);
             })
         const serverAux = servers.find(server => server.id === serverId);
-        setServer(serverAux);
+        const rooms = [];
+        rooms.push(serverAux.id);
+        serverAux.Channels.forEach((channel) => {
+            rooms.push(channel.id);
+        });
+        setRooms(rooms);
         setIsOwner(serverAux.OwnerId === user.id);
         setChannels(serverAux.Channels);
         setDescription(serverAux.description);
@@ -31,9 +36,9 @@ function Server() {
 
     return (
         <div style={{ display: "flex", height: "100%" }}>
-            <ChannelsList serverId={serverId} isOwner={isOwner} channels={channels} />
+            <ChannelsList isOwner={isOwner} channels={channels} rooms={rooms} />
             <Outlet context={description} />
-            <MembersList server={server} isOwner={isOwner} members={members} />
+            <MembersList isOwner={isOwner} members={members} rooms={rooms} />
         </div>
     );
 }

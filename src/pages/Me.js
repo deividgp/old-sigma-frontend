@@ -19,7 +19,7 @@ function Me() {
     const handleSubmit = (event) => {
         event.preventDefault();
 
-        if (user.username != name) {
+        if (user.username !== name) {
             axios.put(`/loggeduser/addfriend`, { username: name })
                 .then((res) => {
                     socket.emit("action", { room: res.data.id, action: "friend_added", user: { id: user.id, username: user.username } });

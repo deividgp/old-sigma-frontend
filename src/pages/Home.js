@@ -34,12 +34,22 @@ function Home() {
   const { setOnlineUsers } = useContext(OnlineUsersContext);
   const { active } = useContext(ActiveContext);
   const { user } = useContext(UserContext);
-  
   const socketListener = (data) => {
     if (data.room === active) return;
 
     alert("You received a message!");
   };
+  const listenerUserKickedServerDeleted = (data) => {
+    axios.get("/loggeduser/servers")
+      .then(servers => {
+        console.log(data);
+        console.log(active);
+        if (data.rooms.includes(active))
+          navigate("/", { replace: true });
+        setServers(servers.data);
+        socket.emit("leave_room", data.rooms);
+      });
+  }
 
   React.useEffect(() => {
     const rooms = [];
@@ -49,7 +59,6 @@ function Home() {
     axios.get("/loggeduser/servers")
       .then(servers => {
         setServers(servers.data);
-
         servers.data.forEach((server) => {
           rooms.push(server.id);
 
@@ -85,26 +94,28 @@ function Home() {
           socket.emit("leave_room", data.channelId);
         });
     });
+    socket.on("friend_deleted", (data) => {
+      if (active === data.friendId)
+        navigate("/", { replace: true });
+      setFriends(current => current.filter(friend => friend.id !== data.friendId));
+    });
+
+    socket.on("server_deleted", listenerUserKickedServerDeleted);
+    socket.on("user_kicked", listenerUserKickedServerDeleted);
 
     return () => {
       socket.off("receive_server_message", socketListener);
       socket.off("receive_private_message", socketListener);
       socket.removeAllListeners("channel_deleted");
+      socket.removeAllListeners("friend_deleted");
+      socket.removeAllListeners("server_deleted");
+      socket.removeAllListeners("user_kicked");
     };
   }, [socket, active]);
 
   React.useEffect(() => {
     socket.on("online_users", (data) => {
       setOnlineUsers(data);
-    });
-
-    socket.on("server_deleted", (data) => {
-      axios.get("/loggeduser/servers")
-        .then(servers => {
-          navigate("/", { replace: true });
-          setServers(servers.data);
-          socket.emit("leave_room", data.room);
-        });
     });
 
     socket.on("channel_created", (data) => {
@@ -115,29 +126,8 @@ function Home() {
         });
     });
 
-    socket.on("user_kicked", (data) => {
-      axios.get("/loggeduser/servers")
-        .then(servers => {
-          setServers(servers.data);
-          const rooms = [];
-
-          rooms.push(data.server.id);
-          data.server.Channels.forEach((channel) => {
-            rooms.push(channel.id);
-          });
-
-          socket.emit("leave_room", rooms);
-        });
-    });
-
     socket.on("friend_accepted", (data) => {
       setFriends(current => [...current, data.user]);
-    });
-
-    socket.on("friend_deleted", (data) => {
-      if (active === data.friendId)
-        navigate("/", { replace: true });
-      setFriends(current => current.filter(friend => friend.id !== data.friendId));
     });
 
     socket.on("friend_added", (data) => {
@@ -146,11 +136,8 @@ function Home() {
 
     return () => {
       socket.removeAllListeners("online_users");
-      socket.removeAllListeners("server_deleted");
       socket.removeAllListeners("channel_created");
-      socket.removeAllListeners("user_kicked");
       socket.removeAllListeners("friend_accepted");
-      socket.removeAllListeners("friend_deleted");
       socket.removeAllListeners("friend_added");
     };
   }, [socket]);
@@ -161,6 +148,15 @@ function Home() {
 
   const handleServerNameSubmit = () => {
     setOpen(false);
+    axios.put("/loggeduser/joinserver", { name: serverName })
+      .then((res) => {
+        socket.emit("join_room", res.data);
+        axios.get("/loggeduser/servers")
+          .then(servers => {
+            setServers(servers.data);
+          });
+      })
+
     setServerName("");
   };
 

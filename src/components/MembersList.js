@@ -5,14 +5,14 @@ import { UserContext } from "../contexts/UserContext";
 import axios from "axios";
 import socket from '../socket';
 
-function MembersList({ server, members, isOwner }) {
+function MembersList({ members, isOwner, rooms }) {
     const { onlineUsers } = useContext(OnlineUsersContext);
     const { user } = useContext(UserContext);
 
     const kickMember = (memberId) => {
-        axios.delete("/servers/" + server.id + "/" + memberId)
+        axios.delete("/servers/" + rooms[0] + "/" + memberId)
             .then(() => {
-                socket.emit("action", { room: memberId, action: "user_kicked", server });
+                socket.emit("action", { room: memberId, action: "user_kicked", rooms });
             });
     };
 

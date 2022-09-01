@@ -29,6 +29,8 @@ function PendingFriendsList() {
 
     return (
         <ul>
+            <li><b>PENDING</b></li>
+            <li>&nbsp;</li>
             {pendingFriends.map((pendingFriend) => {
                 return (
                     <li key={pendingFriend.id}>

@@ -28,7 +28,6 @@ function FriendsList() {
 
     return (
         <ul>
-            <li>&nbsp;</li>
             <li><b>FRIENDS</b></li>
             <li>&nbsp;</li>
             {friends.map((friend) => {
