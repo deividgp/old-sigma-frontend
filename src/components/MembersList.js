@@ -2,10 +2,10 @@ import "./UserState.css";
 import { useContext } from "react";
 import { OnlineUsersContext } from '../contexts/OnlineUsersContext';
 import { UserContext } from "../contexts/UserContext";
-import axios from "axios";
+import axios from "../axios";
 import socket from '../socket';
 
-function MembersList({ members, isOwner, rooms }) {
+function MembersList({ members, setMembers, isOwner, rooms }) {
     const { onlineUsers } = useContext(OnlineUsersContext);
     const { user } = useContext(UserContext);
 
@@ -13,6 +13,7 @@ function MembersList({ members, isOwner, rooms }) {
         axios.delete("/servers/" + rooms[0] + "/" + memberId)
             .then(() => {
                 socket.emit("action", { room: memberId, action: "user_kicked", rooms });
+                setMembers(current => current.filter(member => member.id !== memberId));
             });
     };
 

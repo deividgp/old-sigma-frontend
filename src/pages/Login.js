@@ -4,7 +4,7 @@ import './App.css';
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import Input from "@mui/material/Input";
-import axios from 'axios';
+import axios from "../axios";
 import logo from "../logoSigmaWhite.png";
 import socket from "../socket"
 

@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { UserContext } from "../contexts/UserContext";
 import './App.css';
 import React from "react";
-import axios from 'axios';
+import axios from "../axios";
 import Loading from "../components/Loading";
 import socket from "../socket";
 

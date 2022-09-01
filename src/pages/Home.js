@@ -13,7 +13,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Loading from "../components/Loading";
-import axios from "axios";
+import axios from "../axios";
 import { ServersContext } from '../contexts/ServersContext';
 import { useContext } from "react";
 import { PendingFriendsContext } from '../contexts/PendingFriendsContext';

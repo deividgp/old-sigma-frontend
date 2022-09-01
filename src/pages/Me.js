@@ -4,7 +4,7 @@ import * as React from 'react';
 import "./Me.css";
 import FriendsList from "../components/FriendsList";
 import PendingFriendsList from "../components/PendingFriendsList";
-import axios from "axios";
+import axios from "../axios";
 import socket from "../socket";
 
 function Me() {

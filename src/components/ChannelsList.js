@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { ServersContext } from '../contexts/ServersContext';
 import { useContext } from "react";
 import './List.css';
-import axios from "axios"
+import axios from "../axios";
 import socket from '../socket';
 
 function ChannelsList({ isOwner, channels, rooms }) {
@@ -73,18 +73,25 @@ function ChannelsList({ isOwner, channels, rooms }) {
                 <li>&nbsp;</li>
                 <li><b>CHANNELS</b></li>
                 <li>&nbsp;</li>
-                <li>
-                    <form onSubmit={handleSubmit}>
-                        <input
-                            style={{ width: "75px" }}
-                            type="text"
-                            value={channelName}
-                            onChange={(e) => setChannelName(e.target.value)}
-                        />
-                        <input type="submit" value={"Add channel"} />
-                    </form>
-                </li>
-                <li>&nbsp;</li>
+                {
+                    isOwner
+                        ?
+                        (
+                            <li>
+                                <form onSubmit={handleSubmit}>
+                                    <input
+                                        style={{ width: "75px" }}
+                                        type="text"
+                                        value={channelName}
+                                        onChange={(e) => setChannelName(e.target.value)}
+                                    />
+                                    <input type="submit" value={"Add channel"} />
+                                </form>
+                            </li>
+                        )
+                        :
+                        ""
+                }
                 {channels.map((channel) => {
                     return (
                         <li key={channel.id}>

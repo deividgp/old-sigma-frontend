@@ -10,7 +10,7 @@ import Login from './pages/Login';
 import Home from "./pages/Home"
 import { Routes, Route } from "react-router-dom";
 import { LoggedIn, NotLoggedIn } from './utils/PrivateRoutes';
-import axios from "axios";
+import axios from "./axios";
 import { useContext } from "react";
 import { UserContext } from "./contexts/UserContext";
 import Logout from './pages/Logout';

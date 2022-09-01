@@ -5,7 +5,6 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from "react-router-dom";
 import { UserProvider } from "./contexts/UserContext.js";
 import { ServersProvider } from "./contexts/ServersContext.js";
-import socket from "./socket.js";
 import { FriendsProvider } from './contexts/FriendsContext';
 import { PendingFriendsProvider } from './contexts/PendingFriendsContext';
 import { ActiveProvider } from './contexts/ActiveContext';

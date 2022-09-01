@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import * as React from 'react';
-import axios from "axios";
+import axios from "../axios";
 import { PendingFriendsContext } from "../contexts/PendingFriendsContext";
 import { FriendsContext } from "../contexts/FriendsContext";
 import socket from "../socket";

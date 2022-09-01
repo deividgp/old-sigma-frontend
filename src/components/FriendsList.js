@@ -4,7 +4,7 @@ import * as React from 'react';
 import { FriendsContext } from "../contexts/FriendsContext";
 import "./UserState.css";
 import { OnlineUsersContext } from '../contexts/OnlineUsersContext';
-import axios from "axios";
+import axios from "../axios";
 import { UserContext } from "../contexts/UserContext";
 import socket from "../socket";
 import { ActiveContext } from "../contexts/ActiveContext";

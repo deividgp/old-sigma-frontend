@@ -3,7 +3,7 @@ import ChannelsList from "../components/ChannelsList";
 import MembersList from "../components/MembersList";
 import { useParams } from 'react-router-dom';
 import { useEffect, useState, useContext } from "react";
-import axios from "axios";
+import axios from "../axios";
 import { ServersContext } from '../contexts/ServersContext';
 import { UserContext } from "../contexts/UserContext";
 
@@ -38,7 +38,7 @@ function Server() {
         <div style={{ display: "flex", height: "100%" }}>
             <ChannelsList isOwner={isOwner} channels={channels} rooms={rooms} />
             <Outlet context={description} />
-            <MembersList isOwner={isOwner} members={members} rooms={rooms} />
+            <MembersList isOwner={isOwner} members={members} setMembers={setMembers} rooms={rooms} />
         </div>
     );
 }

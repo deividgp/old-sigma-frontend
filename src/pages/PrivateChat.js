@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { ActiveContext } from "../contexts/ActiveContext";
 import { UserContext } from "../contexts/UserContext";
 import socket from "../socket"
-import axios from "axios";
+import axios from "../axios";
 import { v4 as uuidv4 } from 'uuid';
 
 function PrivateChat() {
