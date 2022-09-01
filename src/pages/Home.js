@@ -80,7 +80,7 @@ function Home() {
             setLoading(false);
           })
       })
-  }, []);
+  }, [user]);
 
   React.useEffect(() => {
     socket.on("receive_server_message", socketListener);
