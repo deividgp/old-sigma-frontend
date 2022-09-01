@@ -42,8 +42,6 @@ function Home() {
   const listenerUserKickedServerDeleted = (data) => {
     axios.get("/loggeduser/servers")
       .then(servers => {
-        console.log(data);
-        console.log(active);
         if (data.rooms.includes(active))
           navigate("/", { replace: true });
         setServers(servers.data);
@@ -55,9 +53,10 @@ function Home() {
     const rooms = [];
 
     socket.emit("get_online_users");
-
+    
     axios.get("/loggeduser/servers")
       .then(servers => {
+        
         setServers(servers.data);
         servers.data.forEach((server) => {
           rooms.push(server.id);
@@ -73,14 +72,13 @@ function Home() {
           })
         axios.get("/loggeduser/pendingfriends")
           .then(pending => {
-            console.log(pending.data);
             setPendingFriends(pending.data);
             socket.emit("join_room", rooms);
 
             setLoading(false);
           })
       })
-  }, [user]);
+  }, []);
 
   React.useEffect(() => {
     socket.on("receive_server_message", socketListener);
