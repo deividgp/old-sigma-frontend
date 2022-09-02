@@ -145,6 +145,7 @@ function Home() {
   };
 
   const handleServerNameSubmit = () => {
+    if(serverName === "") return;
     setOpen(false);
     axios.put("/loggeduser/joinserver", { name: serverName })
       .then((res) => {

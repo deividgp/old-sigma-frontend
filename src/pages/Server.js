@@ -31,6 +31,10 @@ function Server() {
         setIsOwner(serverAux.OwnerId === user.id);
         setChannels(serverAux.Channels);
         setDescription(serverAux.description);
+
+        return () => {
+            setMembers([]);
+        };
     }, [serverId, servers, user]);
 
     return (
