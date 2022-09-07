@@ -14,10 +14,6 @@ function ServerChat() {
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState("");
     const { user } = useContext(UserContext);
-    const socketListener = (data) => {
-        if (channelId !== data.room) return;
-        setMessages(current => [...current, data.userMessage]);
-    };
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: 'auto' });
@@ -57,10 +53,15 @@ function ServerChat() {
     }, [channelId]);
 
     useEffect(() => {
-        socket.on("receive_server_message", socketListener);
+        const listener = (data) => {
+            if (channelId !== data.room) return;
+            setMessages(current => [...current, data.userMessage]);
+        };
+
+        socket.on("receive_server_message", listener);
 
         return () => {
-            socket.off("receive_server_message", socketListener);
+            socket.off("receive_server_message", listener);
         };
     }, [socket, channelId]);
 

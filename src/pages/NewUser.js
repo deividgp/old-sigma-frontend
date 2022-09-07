@@ -10,10 +10,19 @@ function NewUser() {
     const { setUser } = useContext(UserContext);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [avatar, setAvatar] = useState("");
     const [email, setEmail] = useState("");
     const handleSubmit = (event) => {
         event.preventDefault();
-        axios.post("/users/newuser", { username: username, password: password, email: email })
+        const formData = new FormData();
+        formData.append("username", username);
+        formData.append("password", password);
+        formData.append("avatar", avatar);
+        formData.append("email", email);
+
+        axios.post("/users/newuser", formData,{
+            headers: { 'content-type': 'multipart/form-data' }
+        })
             .then((res) => {
                 console.log(res.data);
                 setUser(res.data);
@@ -47,6 +56,10 @@ function NewUser() {
                                 <label htmlFor="password">Password</label>
                                 <br></br>
                                 <input id="password" type={"password"} value={password} onChange={(e) => setPassword(e.target.value)}></input>
+                                <br></br>
+                                <label htmlFor="avatar">Avatar (used for face recognition)</label>
+                                <br></br>
+                                <input id="avatar" type={"file"} accept=".jpg,.jpeg,.png" onChange={(e) => setAvatar(e.target.files[0])}></input>
                                 <br></br><br></br>
                                 <input type="submit" value="Sign up" />
                             </form>

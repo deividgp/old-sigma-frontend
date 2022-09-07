@@ -34,24 +34,17 @@ function Home() {
   const { setOnlineUsers } = useContext(OnlineUsersContext);
   const { active } = useContext(ActiveContext);
   const { user } = useContext(UserContext);
-  const socketListener = (data) => {
-    if (data.room === active) return;
 
-    alert("You received a message!");
-  };
-  const listenerUserKickedServerDeleted = (data) => {
-    axios.get("/loggeduser/servers")
-      .then(servers => {
-        if (data.rooms.includes(active))
-          navigate("/", { replace: true });
-        setServers(servers.data);
-        socket.emit("leave_room", data.rooms);
-      });
+  const toBase64 = (arr) => {
+    //arr = new Uint8Array(arr) if it's an ArrayBuffer
+    return btoa(
+      arr.reduce((data, byte) => data + String.fromCharCode(byte), '')
+    );
   }
 
   React.useEffect(() => {
     const rooms = [];
-
+    
     socket.emit("get_online_users");
     
     axios.get("/loggeduser/servers")
@@ -81,8 +74,24 @@ function Home() {
   }, []);
 
   React.useEffect(() => {
-    socket.on("receive_server_message", socketListener);
-    socket.on("receive_private_message", socketListener);
+    const listener = (data) => {
+      if (data.room === active) return;
+  
+      alert("You received a message!");
+    };
+
+    const listener2 = (data) => {
+      axios.get("/loggeduser/servers")
+        .then(servers => {
+          if (data.rooms.includes(active))
+            navigate("/", { replace: true });
+          setServers(servers.data);
+          socket.emit("leave_room", data.rooms);
+        });
+    }
+
+    socket.on("receive_server_message", listener);
+    socket.on("receive_private_message", listener);
     socket.on("channel_deleted", (data) => {
       axios.get("/loggeduser/servers")
         .then(servers => {
@@ -98,12 +107,12 @@ function Home() {
       setFriends(current => current.filter(friend => friend.id !== data.friendId));
     });
 
-    socket.on("server_deleted", listenerUserKickedServerDeleted);
-    socket.on("user_kicked", listenerUserKickedServerDeleted);
+    socket.on("server_deleted", listener2);
+    socket.on("user_kicked", listener2);
 
     return () => {
-      socket.off("receive_server_message", socketListener);
-      socket.off("receive_private_message", socketListener);
+      socket.off("receive_server_message", listener);
+      socket.off("receive_private_message", listener);
       socket.removeAllListeners("channel_deleted");
       socket.removeAllListeners("friend_deleted");
       socket.removeAllListeners("server_deleted");

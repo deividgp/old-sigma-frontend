@@ -14,10 +14,6 @@ function PrivateChat() {
     const { setActive } = useContext(ActiveContext);
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState("");
-    const socketListener = (data) => {
-        if (userId !== data.room) return;
-        setMessages(current => [...current, data.userMessage]);
-    };
 
     const handleMessageSubmit = (event) => {
         event.preventDefault();
@@ -57,10 +53,15 @@ function PrivateChat() {
     }, [userId]);
 
     useEffect(() => {
-        socket.on("receive_private_message", socketListener);
+        const listener = (data) => {
+            if (userId !== data.room) return;
+            setMessages(current => [...current, data.userMessage]);
+        };
+
+        socket.on("receive_private_message", listener);
 
         return () => {
-            socket.off("receive_private_message", socketListener);
+            socket.off("receive_private_message", listener);
         };
     }, [socket, userId]);
 
