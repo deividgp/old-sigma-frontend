@@ -60,6 +60,9 @@ function Login() {
         const video = videoRef.current;
         const canvas = canvasRef.current;
         const context = canvas.getContext("2d");
+
+        if (!streaming) return;
+
         context.drawImage(video, 0, 0, width, height);
 
         setTimeout(function () {

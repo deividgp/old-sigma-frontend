@@ -22,6 +22,8 @@ import { ActiveContext } from '../contexts/ActiveContext';
 import { OnlineUsersContext } from '../contexts/OnlineUsersContext';
 import socket from "../socket";
 import { UserContext } from '../contexts/UserContext';
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 function Home() {
   const navigate = useNavigate();
@@ -44,12 +46,12 @@ function Home() {
 
   React.useEffect(() => {
     const rooms = [];
-    
+
     socket.emit("get_online_users");
-    
+
     axios.get("/loggeduser/servers")
       .then(servers => {
-        
+
         setServers(servers.data);
         servers.data.forEach((server) => {
           rooms.push(server.id);
@@ -71,13 +73,25 @@ function Home() {
             setLoading(false);
           })
       })
+    // eslint-disable-next-line
   }, []);
 
   React.useEffect(() => {
     const listener = (data) => {
+      console.log(data);
       if (data.room === active) return;
-  
-      alert("You received a message!");
+
+      //alert("You received a message!");
+      toast('New message', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: 'dark'
+      });
     };
 
     const listener2 = (data) => {
@@ -118,6 +132,7 @@ function Home() {
       socket.removeAllListeners("server_deleted");
       socket.removeAllListeners("user_kicked");
     };
+    // eslint-disable-next-line
   }, [socket, active]);
 
   React.useEffect(() => {
@@ -147,6 +162,7 @@ function Home() {
       socket.removeAllListeners("friend_accepted");
       socket.removeAllListeners("friend_added");
     };
+    // eslint-disable-next-line
   }, [socket]);
 
   const handleClickNavigate = (route) => {
@@ -154,7 +170,7 @@ function Home() {
   };
 
   const handleServerNameSubmit = () => {
-    if(serverName === "") return;
+    if (serverName === "") return;
     setOpen(false);
     axios.put("/loggeduser/joinserver", { name: serverName })
       .then((res) => {
@@ -180,6 +196,16 @@ function Home() {
             <div>
               <div className='App-header'>
                 <img src={logo} alt="Logo" />
+                {
+                  user.avatar !== null ?
+                    (
+                      <img src={"data:image/png;base64," + toBase64(user.avatar.data)} alt="" style={{ borderRadius: "50%" }} />
+                    )
+                    :
+                    (
+                      ""
+                    )
+                }
                 <h2 style={{ display: "inherit", alignItems: "center" }}>{user.username}</h2>
                 <nav>
                   <ul>
@@ -244,6 +270,7 @@ function Home() {
                   <Button onClick={handleServerNameSubmit}>Create or join</Button>
                 </DialogActions>
               </Dialog>
+              <ToastContainer />
             </div>
           )
       }
