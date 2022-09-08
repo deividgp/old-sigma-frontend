@@ -14,7 +14,6 @@ function Login() {
     const [height, setHeight] = useState(360);
     const canvasRef = useRef(null);
     const videoRef = useRef(null);
-    let canvasContext;
     let streaming = false;
 
     const handleSubmit = (e) => {
@@ -41,8 +40,6 @@ function Login() {
             }
         };
 
-        canvasContext = canvasRef.current.getContext("2d");
-
         navigator.mediaDevices.getUserMedia({ video: true, audio: false })
             .then((stream) => {
                 video.srcObject = stream;
@@ -57,7 +54,50 @@ function Login() {
         return () => {
             video.removeEventListener("canplay", videoListener);
         };
-    }, [])
+    }, [videoRef, canvasRef])
+
+    const takePicture = () => {
+        const video = videoRef.current;
+        const canvas = canvasRef.current;
+        const context = canvas.getContext("2d");
+        context.drawImage(video, 0, 0, width, height);
+
+        setTimeout(function () {
+            context.fillStyle = "#FFFFFF";
+            context.fillRect(0, 0, width, height);
+        }, 2000);
+
+        let dataURI = canvas.toDataURL("image/jpeg");
+
+        const byteString = atob(dataURI.split(',')[1]);
+
+        // separate out the mime component
+        const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+
+        // write the bytes of the string to an ArrayBuffer
+        const ab = new ArrayBuffer(byteString.length);
+
+        // create a view into the buffer
+        const ia = new Uint8Array(ab);
+
+        // set the bytes of the buffer to the correct values
+        for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+
+        // write the ArrayBuffer to a blob, and you're done
+        let blob = new Blob([ab], { type: mimeString });
+        console.log(blob);
+        const formData = new FormData();
+        formData.append('imatge', blob);
+
+        axios.post("/loginface", formData,{
+            headers: { 'content-type': 'multipart/form-data' }
+        })
+            .then((res) => {
+                console.log(res.data);
+            });
+    };
 
     return (
         <div>
@@ -88,15 +128,17 @@ function Login() {
                             <h3>
                                 Face login
                                 <br></br>
-                                <button>Take picture</button>
+                                <button onClick={takePicture}>Take picture</button>
                             </h3>
                             <canvas ref={canvasRef}
                                 width={width}
-                                height={height}>
+                                height={height}
+                                style={{margin: "10px"}}>
                             </canvas>
                             <video ref={videoRef}
                                 width={width}
-                                height={height}>
+                                height={height}
+                                style={{margin: "10px"}}>
                             </video>
                         </div>
                     </div>
