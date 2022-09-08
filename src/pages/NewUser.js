@@ -5,6 +5,7 @@ import * as React from 'react';
 import "./Me.css";
 import logo from "../logoSigmaWhite.png";
 import axios from "../axios";
+import socket from "../socket"
 
 function NewUser() {
     const { setUser } = useContext(UserContext);
@@ -24,8 +25,11 @@ function NewUser() {
             headers: { 'content-type': 'multipart/form-data' }
         })
             .then((res) => {
-                console.log(res.data);
                 setUser(res.data);
+                const userid = res.data.id;
+                socket.auth = { userid };
+                socket.connect();
+                socket.emit("join_room", userid);
             });
     };
 

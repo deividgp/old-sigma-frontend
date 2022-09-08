@@ -12,9 +12,9 @@ function Login() {
     const [password, setPassword] = useState("");
     const [width] = useState(480);
     const [height, setHeight] = useState(360);
+    const [streaming, setStreaming] = useState(false);
     const canvasRef = useRef(null);
     const videoRef = useRef(null);
-    let streaming = false;
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -36,7 +36,7 @@ function Login() {
                 if (isNaN(height)) {
                     setHeight(width / (4 / 3));
                 }
-                streaming = true;
+                setStreaming(true);
             }
         };
 
@@ -67,36 +67,21 @@ function Login() {
             context.fillRect(0, 0, width, height);
         }, 2000);
 
-        let dataURI = canvas.toDataURL("image/jpeg");
+        canvas.toBlob((blob) => {
+            const formData = new FormData();
+            formData.append('imatge', blob);
 
-        const byteString = atob(dataURI.split(',')[1]);
-
-        // separate out the mime component
-        const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
-
-        // write the bytes of the string to an ArrayBuffer
-        const ab = new ArrayBuffer(byteString.length);
-
-        // create a view into the buffer
-        const ia = new Uint8Array(ab);
-
-        // set the bytes of the buffer to the correct values
-        for (let i = 0; i < byteString.length; i++) {
-            ia[i] = byteString.charCodeAt(i);
-        }
-
-        // write the ArrayBuffer to a blob, and you're done
-        let blob = new Blob([ab], { type: mimeString });
-        console.log(blob);
-        const formData = new FormData();
-        formData.append('imatge', blob);
-
-        axios.post("/loginface", formData,{
-            headers: { 'content-type': 'multipart/form-data' }
-        })
-            .then((res) => {
-                console.log(res.data);
-            });
+            axios.post("/loginface", formData, {
+                headers: { 'content-type': 'multipart/form-data' }
+            })
+                .then((res) => {
+                    setUser(res.data);
+                    const userid = res.data.id;
+                    socket.auth = { userid };
+                    socket.connect();
+                    socket.emit("join_room", userid);
+                });
+        });
     };
 
     return (
@@ -133,12 +118,12 @@ function Login() {
                             <canvas ref={canvasRef}
                                 width={width}
                                 height={height}
-                                style={{margin: "10px"}}>
+                                style={{ margin: "10px" }}>
                             </canvas>
                             <video ref={videoRef}
                                 width={width}
                                 height={height}
-                                style={{margin: "10px"}}>
+                                style={{ margin: "10px" }}>
                             </video>
                         </div>
                     </div>
